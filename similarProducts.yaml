@@ -21,25 +21,34 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                description: 'List of similar products to a given one ordered by similarity'
-                minItems: 0
-                uniqueItems: true
-                items:
-                  type: object
-                  required:
-                    - id
-                    - name
-                    - price
-                    - availability
-                  properties:
-                    id:
-                      type: string
-                      minLength: 1
-                    name:
-                      type: string
-                      minLength: 1
-                    price:
-                      type: number
-                    availability:
-                      type: boolean
+                 $ref: '#/components/schemas/SimilarProducts'
+        '404':
+          description: Product Not found
+components:
+  schemas:
+    SimilarProducts:
+      type: array
+      description: 'List of similar products to a given one ordered by similarity'
+      minItems: 0
+      uniqueItems: true
+      items:
+        $ref: '#/components/schemas/ProductDetail'
+    ProductDetail:
+      description: 'Product detail'
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+        name:
+          type: string
+          minLength: 1
+        price:
+          type: number
+        availability:
+          type: boolean
+      required:
+        - id
+        - name
+        - price
+        - availability

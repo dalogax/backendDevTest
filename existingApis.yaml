@@ -22,12 +22,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                description: List of productIds similar to a given one ordered by similarity
-                minItems: 0
-                uniqueItems: true
-                items:
-                  type: integer
+                $ref: '#/components/schemas/SimilarProducts' 
   '/product/{productId}':
     parameters:
       - schema:
@@ -45,21 +40,35 @@ paths:
           content:
             application/json:
               schema:
-                description: 'Product detail'
-                type: object
-                properties:
-                  id:
-                    type: string
-                    minLength: 1
-                  name:
-                    type: string
-                    minLength: 1
-                  price:
-                    type: number
-                  availability:
-                    type: boolean
-                required:
-                  - id
-                  - name
-                  - price
-                  - availability
+                 $ref: '#/components/schemas/ProductDetail'
+        '404':
+          description: Product Not found
+components:
+  schemas:
+    SimilarProducts:
+      type: array
+      description: 'List of similar product Ids to a given one ordered by similarity'
+      minItems: 0
+      uniqueItems: true
+      items:
+        type: string
+        example: ["1","2","3"]
+    ProductDetail:
+      description: 'Product detail'
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+        name:
+          type: string
+          minLength: 1
+        price:
+          type: number
+        availability:
+          type: boolean
+      required:
+        - id
+        - name
+        - price
+        - availability
