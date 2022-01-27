@@ -31,3 +31,5 @@ services:
       - ./shared/k6:/scripts
     environment:
       - K6_OUT=influxdb=http://influxdb:8086/k6
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
