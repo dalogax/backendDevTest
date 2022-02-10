@@ -6,21 +6,19 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import lombok.SneakyThrows;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.assertj.core.api.Assertions;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import static com.example.demo.controller.TestData.givenSimilarProductIds;
-import static com.example.demo.controller.TestData.givenSimilarProductMap;
-import static com.example.demo.controller.TestData.givenSimilarProducts;
+import static com.example.demo.controller.TestData.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -81,7 +79,7 @@ public class SimilarProductsControllerTest {
         String productId = "1";
 
         // given
-        stubInWireMockServer(String.format("/product/%s/similarIds", productId), asJson(givenSimilarProductIds));
+        stubInWireMockServer(String.format("/product/%s/similarids", productId), asJson(givenSimilarProductIds));
 
         // when
         final ResponseEntity<String> response = this.testRestTemplate.getForEntity(
@@ -101,7 +99,7 @@ public class SimilarProductsControllerTest {
         String productId = "1";
 
         // given
-        stubInWireMockServer(String.format("/product/%s/similarIds", productId), asJson(givenSimilarProductIds));
+        stubInWireMockServer(String.format("/product/%s/similarids", productId), asJson(givenSimilarProductIds));
         givenSimilarProducts.forEach(p -> stubInWireMockServer(String.format("/product/%s", p.getId()), asJson(p)));
 
 

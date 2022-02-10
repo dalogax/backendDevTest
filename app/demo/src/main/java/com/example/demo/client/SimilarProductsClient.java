@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 @FeignClient(name = "SimilarProductsClient",
-        url = "localhost:3001")
+        url = "${similar-products.url}")
 public interface SimilarProductsClient {
 
-    @GetMapping(value = "/product/{productId}/similarids")
+    @GetMapping("${similar-product-ids.path}")
     List<String> getSimilarProductIds(@PathVariable String productId);
 
-    @GetMapping(value = "/product/{productId}")
+    @GetMapping("${get-product-by-id.path}")
     Product getProductById(@PathVariable String productId);
 
 }
