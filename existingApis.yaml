@@ -1,0 +1,74 @@
+openapi: 3.0.0
+info:
+  title: existingApis
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3001'
+paths:
+  '/product/{productId}/similarids':
+    parameters:
+      - schema:
+          type: string
+        name: productId
+        in: path
+        required: true
+    get:
+      operationId: get-product-similarids
+      summary: Gets the ids of the similar products
+      description: Returns the similar products to a given one ordered by similarity
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimilarProducts' 
+  '/product/{productId}':
+    parameters:
+      - schema:
+          type: string
+        name: productId
+        in: path
+        required: true
+    get:
+      operationId: get-product-productId
+      summary: Gets a product detail
+      description: Returns the product detail for a given productId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/ProductDetail'
+        '404':
+          description: Product Not found
+components:
+  schemas:
+    SimilarProducts:
+      type: array
+      description: 'List of similar product Ids to a given one ordered by similarity'
+      minItems: 0
+      uniqueItems: true
+      items:
+        type: string
+        example: ["1","2","3"]
+    ProductDetail:
+      description: 'Product detail'
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+        name:
+          type: string
+          minLength: 1
+        price:
+          type: number
+        availability:
+          type: boolean
+      required:
+        - id
+        - name
+        - price
+        - availability
