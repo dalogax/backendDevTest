@@ -51,23 +51,6 @@ public class ProductService implements IProductService {
                 .cache();
     }
 
-    @Cacheable("ProductDto")
-    public Mono<ProductDto> getProductById2(String id) {
-
-        return client.get().uri(uriProductId, Collections.singletonMap("id", id))
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .onStatus(HttpStatus::isError, xxx -> Mono.error(new ProductException(xxx.rawStatusCode(), "Error")))
-                .bodyToMono(ProductDto.class).log()
-                .retryWhen(Retry.backoff(maxAttempts, Duration.ofSeconds(backoffTime))
-                        .filter(t -> t instanceof ProductException)
-                        .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
-                            throw new ProductException(HttpStatus.SERVICE_UNAVAILABLE.value(),
-                                    "External API Services failed to process after max retries");
-                        }));
-
-    }
-
     @Override
     @Cacheable("ProductDto")
     public Mono<ProductDto> getProductById(String id) {
@@ -80,7 +63,7 @@ public class ProductService implements IProductService {
 
         cliente.onErrorResume(WebClientResponseException.class, res -> {
 
-            if (res.getMessage().contains("500 Internal Server")) {
+            if (HttpStatus.INTERNAL_SERVER_ERROR == res.getStatusCode()) {
                 this.flag = true;
                 return Mono.empty();
             } else {
