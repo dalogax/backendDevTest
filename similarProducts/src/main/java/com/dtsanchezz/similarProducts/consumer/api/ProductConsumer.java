@@ -18,7 +18,7 @@ public class ProductConsumer extends ConsumerBase {
     private static final String GET_PRODUCT_SIMILAR_IDS = "%s/{productId}/similarids";
     private static final String GET_PRODUCT_DETAIL = "%s/{productId}";
 
-    @Cacheable
+    @Cacheable("similar")
     public List<String> getSimilarIds(final String productId) {
 
         final String[] response = (String[]) this.consume(
@@ -30,7 +30,7 @@ public class ProductConsumer extends ConsumerBase {
         return Arrays.asList(response);
     }
 
-    @Cacheable
+    @Cacheable("product")
     public ProductDetail getProductDetail(final String productId) {
 
         return (ProductDetail) this.consume(

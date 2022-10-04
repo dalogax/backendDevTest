@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @WebAppConfiguration
 @ExtendWith(MockitoExtension.class)
-public class ProductControllerTest {
+public class ProductIntegrationTest {
 
     public static final String URI = "http://localhost:";
 
@@ -51,12 +51,10 @@ public class ProductControllerTest {
 
     public static String PRODUCT_ID_TO_TEST = "1";
 
-    final ProductDetail productOne = new ProductDetail("1", "Test ONE", 1.99, true);
     final ProductDetail productTwo = new ProductDetail("2", "Test TWO", 2.99, true);
     final ProductDetail productThree = new ProductDetail("3", "Test THREE", 3.99, true);
     final ProductDetail productFour = new ProductDetail("4", "Test FOUR", 4.99, true);
 
-    final List<ProductDetail> productControllerList = List.of(this.productOne, this.productTwo, this.productThree, this.productFour);
 
     @Test
     public void getSimilarProductsSuccess_200() throws Exception {
@@ -64,13 +62,13 @@ public class ProductControllerTest {
                 .thenReturn(List.of("2", "3", "4"));
 
         when(this.productConsumer.getProductDetail("2"))
-                .thenReturn(this.productOne);
-
-        when(this.productConsumer.getProductDetail("3"))
                 .thenReturn(this.productTwo);
 
-        when(this.productConsumer.getProductDetail("4"))
+        when(this.productConsumer.getProductDetail("3"))
                 .thenReturn(this.productThree);
+
+        when(this.productConsumer.getProductDetail("4"))
+                .thenReturn(this.productFour);
 
         final MvcResult mvcResult = this.mvc.perform(get(URI + this.serverPort + "/product/" + PRODUCT_ID_TO_TEST + "/similar"))
                 .andExpect(status().isOk())
