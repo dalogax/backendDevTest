@@ -9,7 +9,7 @@
 
 ### Tests before cache
 
-![Before Cache](./assets/before_chache.png "Before Cache")
+![Before Cache](./assets/before_cache.png "Before Cache")
 
 ### Tests after cache
 
