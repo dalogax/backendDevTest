@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "mocks.url",
+  "type": "java.lang.String",
+  "description": "Url of mocks, for default http://localhost:3001"
+}]}
