@@ -30,4 +30,4 @@ Browse [http://localhost:3000/d/Le2Ku9NMk/k6-performance-test](http://localhost:
 The following topics will be considered:
 - Code clarity and maintainability
 - Performance
-- Resilience
+- Resilence
