@@ -18,7 +18,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ExtendWith(MockitoExtension.class)
 class SimilarProductControllerTest {
 
-    public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json;charset=UTF-8";
     private MockMvc mvc;
 
     @InjectMocks
