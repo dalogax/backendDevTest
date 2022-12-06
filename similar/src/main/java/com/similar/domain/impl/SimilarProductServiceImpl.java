@@ -1,11 +1,9 @@
 package com.similar.domain.impl;
 
 import com.similar.domain.SimilarProductService;
-
 import com.similar.domain.model.Product;
 import com.similar.infrastructure.client.SimulatedClient;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SimilarProductServiceImpl implements SimilarProductService {
@@ -25,6 +22,7 @@ public class SimilarProductServiceImpl implements SimilarProductService {
         return this.client.getSimilar(getHeaders(), productId)
                 .stream()
                 .map(this.client::getDetailOfProduct)
+                .filter(Product::availability)
                 .collect(Collectors.toList());
     }
 
