@@ -16,5 +16,5 @@ public interface SimulatedClient {
     List<Long> getSimilar(@RequestHeader HttpHeaders headers, @PathVariable Long productId);
 
     @GetMapping(path = "/product/{similarProductId}")
-    Product getDetailOfProduct( @PathVariable Long similarProductId);
+    Product getDetailOfProduct(@PathVariable Long similarProductId);
 }
