@@ -1,14 +1,18 @@
 package com.similar.application.exception;
 
 import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import static java.lang.String.format;
 
+@Slf4j
 @ControllerAdvice
 public class SimulatedClientExceptionHandler extends ResponseEntityExceptionHandler {
+    public static final String ERROR_MSG = "Error getting detail of product, detail [%s]";
 
     // Method for get details of error to the client:
 /*
@@ -27,7 +31,8 @@ public class SimulatedClientExceptionHandler extends ResponseEntityExceptionHand
 
     // Method for backendtest
     @ExceptionHandler({ FeignException.NotFound.class })
-    public ResponseEntity<Object> handleSimulatedClientNotFoundException() {
+    public ResponseEntity<Object> handleSimulatedClientNotFoundException(FeignException.NotFound ex) {
+        log.error(format(ERROR_MSG, ex.getMessage()));
         return ResponseEntity.notFound().build();
     }
 }
