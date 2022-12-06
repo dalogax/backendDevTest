@@ -29,5 +29,6 @@ class SimilarProductServiceImplTest {
         assertNotNull(res);
         assertNotNull(client);
         verify(client).getSimilar(any(), any());
+        verify(client).getDetailOfProduct(any());
     }
 }
