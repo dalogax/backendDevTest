@@ -1,7 +1,9 @@
 package com.similar.domain;
 
+import com.similar.domain.model.Product;
+
 import java.util.List;
 
 public interface SimilarProductService {
-    List<String> getSimilarProductBy(Long productId);
+    List<Product> getSimilarProductBy(Long productId);
 }
