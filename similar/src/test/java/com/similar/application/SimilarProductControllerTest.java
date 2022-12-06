@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.similar.application.exception.SimulatedClientExceptionHandler;
 import com.similar.domain.SimilarProductService;
 import com.similar.domain.model.Product;
+import feign.FeignException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -86,6 +87,21 @@ class SimilarProductControllerTest {
                 new Product( "2","Dress", BigDecimal.valueOf(19.99), true),
                 new Product( "4","Boots", BigDecimal.valueOf(39.99), true)
         );
+    }
+
+    @Test
+    public void should_return_404_when_not_found_products() throws Exception {
+        // given
+        given(similarProductService.getSimilarProductBy(1L)).willThrow(FeignException.NotFound.class);
+
+        // when
+        MockHttpServletResponse response = mvc.perform(
+                        get("/product/1/similar")
+                                .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
 
