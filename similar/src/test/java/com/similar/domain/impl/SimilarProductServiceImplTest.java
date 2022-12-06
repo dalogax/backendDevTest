@@ -53,4 +53,19 @@ class SimilarProductServiceImplTest {
         verify(client).getSimilar(any(), any());
         verify(client, times(3)).getDetailOfProduct(any());
     }
+
+    @Test
+    void when_invoke_get_detail_of_similar_products_and_throw_exception(){
+        when(client.getSimilar(any(),any())).thenReturn(List.of(1L, 2L, 3L));
+        when(client.getDetailOfProduct(anyLong())).thenReturn(new Product("1", "test", BigDecimal.TEN, true));
+        when(client.getDetailOfProduct(2L)).thenThrow(new RuntimeException());
+
+        final var res = sut.getSimilarProductBy(1L);
+
+        assertNotNull(res);
+        assertNotNull(client);
+        assertEquals(2, res.size());
+        verify(client).getSimilar(any(), any());
+        verify(client, times(3)).getDetailOfProduct(any());
+    }
 }
