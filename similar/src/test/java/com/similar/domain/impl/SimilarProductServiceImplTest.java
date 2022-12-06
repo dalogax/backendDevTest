@@ -38,4 +38,19 @@ class SimilarProductServiceImplTest {
         verify(client).getSimilar(any(), any());
         verify(client, times(2)).getDetailOfProduct(any());
     }
+
+    @Test
+    void when_invoke_similar_products_with_id_get_list_products_and_filtering_by_availability(){
+        when(client.getSimilar(any(),any())).thenReturn(List.of(1L, 2L, 3L));
+        when(client.getDetailOfProduct(anyLong())).thenReturn(new Product("1", "test", BigDecimal.TEN, true));
+        when(client.getDetailOfProduct(2L)).thenReturn(new Product("2", "test", BigDecimal.TEN, false));
+
+        final var res = sut.getSimilarProductBy(1L);
+
+        assertNotNull(res);
+        assertNotNull(client);
+        assertEquals(2, res.size());
+        verify(client).getSimilar(any(), any());
+        verify(client, times(3)).getDetailOfProduct(any());
+    }
 }
