@@ -1,0 +1,77 @@
+[
+  {
+    "path": "/product/1/similarids",
+    "body": "[2,3,4]",
+    "headers": {"Content-Type": "application/json"}
+  },
+  {
+    "path": "/product/2/similarids",
+    "body": "[3,100,1000]",
+    "headers": {"Content-Type": "application/json"}
+  },
+  {
+    "path": "/product/3/similarids",
+    "body": "[100,1000,10000]",
+    "headers": {"Content-Type": "application/json"}
+  },
+  {
+    "path": "/product/4/similarids",
+    "body": "[1,2,5]",
+    "headers": {"Content-Type": "application/json"}
+  },
+  {
+    "path": "/product/5/similarids",
+    "body": "[1,2,6]",
+    "headers": {"Content-Type": "application/json"}
+  },
+  {
+    "path": "/product/1",
+    "body": "{\"id\":\"1\",\"name\":\"Shirt\",\"price\":9.99,\"availability\":true}",
+    "headers": {"Content-Type": "application/json"}
+  },
+  {
+    "path": "/product/2",
+    "body": "{\"id\":\"2\",\"name\":\"Dress\",\"price\":19.99,\"availability\":true}",
+    "headers": {"Content-Type": "application/json"}
+  },
+  {
+    "path": "/product/3",
+    "body": "{\"id\":\"3\",\"name\":\"Blazer\",\"price\":29.99,\"availability\":false}",
+    "headers": {"Content-Type": "application/json"},
+    "delay": 100
+  },
+  {
+    "path": "/product/4",
+    "body": "{\"id\":\"4\",\"name\":\"Boots\",\"price\":39.99,\"availability\":true}",
+    "headers": {"Content-Type": "application/json"}
+  },
+  {
+    "path": "/product/5",
+    "body": "{\"message\":\"Product not found\"}",
+    "status": 404,
+    "headers": {"Content-Type": "application/json"}
+  },
+  {
+    "path": "/product/6",
+    "status": 500,
+    "headers": {"Content-Type": "application/json"}
+  },
+  {
+    "path": "/product/100",
+    "body": "{\"id\":\"100\",\"name\":\"Trousers\",\"price\":49.99,\"availability\":false}",
+    "delay": 1000,
+    "headers": {"Content-Type": "application/json"}
+  },
+  {
+    "path": "/product/1000",
+    "body": "{\"id\":\"1000\",\"name\":\"Coat\",\"price\":89.99,\"availability\":true}",
+    "delay": 5000,
+    "headers": {"Content-Type": "application/json"}
+  },
+  {
+    "path": "/product/10000",
+    "body": "{\"id\":\"10000\",\"name\":\"Leather jacket\",\"price\":89.99,\"availability\":true}",
+    "delay": 50000,
+    "headers": {"Content-Type": "application/json"}
+  }
+]
