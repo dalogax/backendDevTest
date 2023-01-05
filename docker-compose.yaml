@@ -34,9 +34,10 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
   shop_app:
-    build:
-      context: ./
-      dockerfile: ./apps/shop_app/Dockerfile
+    image: informaticoloco/shop_app
+#    build:
+#      context: ./
+#      dockerfile: ./apps/shop_app/Dockerfile
     ports:
       - "5000:5000"
     environment:
