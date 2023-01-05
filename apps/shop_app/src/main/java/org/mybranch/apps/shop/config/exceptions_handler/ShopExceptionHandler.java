@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -23,8 +24,12 @@ public class ShopExceptionHandler {
     @ResponseBody
     public ResponseEntity<?> notFoundHandler(ProductNotFoundError e) {
 
+        Map<String, String> responseBody = new LinkedHashMap<>();
+        responseBody.put("message", "Product not found");
+        responseBody.put("developerMessage", e.getMessage());
+
         return new ResponseEntity<>(
-                Collections.singletonMap("message", "Product not found"),
+                responseBody,
                 HttpStatus.NOT_FOUND
         );
     }
@@ -34,8 +39,12 @@ public class ShopExceptionHandler {
     @ResponseBody
     public ResponseEntity<?> badRequestErrorHandler(ProductBadRequestError e) {
 
+        Map<String, String> responseBody = new LinkedHashMap<>();
+        responseBody.put("message", "Product bad request");
+        responseBody.put("developerMessage", e.getMessage());
+
         return new ResponseEntity<>(
-                Collections.singletonMap("message", "Product bad request error"),
+                responseBody,
                 HttpStatus.BAD_REQUEST
         );
     }
@@ -45,8 +54,12 @@ public class ShopExceptionHandler {
     @ResponseBody
     public ResponseEntity<?> internalErrorHandler(ProductInternalError e) {
 
+        Map<String, String> responseBody = new LinkedHashMap<>();
+        responseBody.put("message", "Product internal error");
+        responseBody.put("developerMessage", e.getMessage());
+
         return new ResponseEntity<>(
-                Collections.singletonMap("message", "Product internal error"),
+                responseBody,
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
