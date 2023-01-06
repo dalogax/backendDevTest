@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mybranch.apps.shop.ShopApplication;
-import org.mybranch.apps.shop.api.dto.ProductDetailDTO;
+import org.mybranch.apps.shop.api.dto.ProductDetailDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,12 +34,12 @@ class SimilarProductsGetControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private List<ProductDetailDTO> similarProducts;
+    private List<ProductDetailDto> similarProducts;
 
     @SneakyThrows
     @BeforeEach
     void setup() {
-        similarProducts = loadFromPackageAsList("similarProducts.json", ProductDetailDTO.class);
+        similarProducts = loadFromPackageAsList("similarProducts.json", ProductDetailDto.class);
     }
 
     @SneakyThrows
