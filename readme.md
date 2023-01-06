@@ -32,7 +32,7 @@ The following topics will be considered:
 - Performance
 - Resilience
 
-## How to test the resolution
+## 🆕 How to test the resolution
 The only thing needed is to add the new application container to the docker-compose command.
 ```
 docker-compose up -d simulado influxdb grafana shop_app
