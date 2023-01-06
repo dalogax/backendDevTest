@@ -24,7 +24,7 @@ public final class FindSimilarProductsById {
             throw new ProductNotFoundError("Similar ids not found");
         }
 
-        return similarIds.stream()
+        return similarIds.parallelStream()
                 .map(productsRestClient::productDetail)
                 .collect(Collectors.toList());
     }
