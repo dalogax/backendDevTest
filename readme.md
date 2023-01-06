@@ -52,3 +52,5 @@ docker run -it --add-host=host.docker.internal:host-gateway -p 5000:5000 --env P
 We pass the bridge domain of the host as environment variable, and we ensure the exposed port is the 5000.
 
 After the container is up, we can launch an execution to the url GET http://localhost:5000/product/1/similar using Postman or whatever and the execution should return a filled list. 
+
+![Evidence](./assets/evidence.png "Evidence")
