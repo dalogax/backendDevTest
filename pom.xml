@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.1</version>
+        <version>2.7.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.inditex</groupId>
@@ -39,15 +39,22 @@
             <artifactId>jackson-databind-nullable</artifactId>
             <version>0.2.4</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
+        <!-- https://mvnrepository.com/artifact/io.springfox/springfox-boot-starter -->
         <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.6.14</version>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>3.0.0</version>
         </dependency>
+        <!-- @Nullable annotation -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
     </dependencies>
     <build>
-        <finalName>myApp-API</finalName>
+        <finalName>myApp</finalName>
 
         <plugins>
             <!--https://openapi-generator.tech/docs/plugins/-->
@@ -81,9 +88,23 @@
                                 <modelPackage>com.inditex.myapp.model</modelPackage>
                                 <apiPackage>com.inditex.myapp.controller</apiPackage>
                                 <sourceFolder>/src/main/java</sourceFolder>
-                                <implFolder>/src/main/java</implFolder>
-                                <useSpringBoot3>true</useSpringBoot3>
                             </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/existingApis.yml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateApiTests>false</generateApiTests>
+                            <configOptions>
+                                <sourceFolder>/src/main/java</sourceFolder>
+                            </configOptions>
+                            <library>resttemplate</library>
                         </configuration>
                     </execution>
                 </executions>
