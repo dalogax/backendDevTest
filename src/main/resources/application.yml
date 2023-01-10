@@ -1,0 +1,7 @@
+server:
+  port: 5000
+
+endpoints:
+  existingApi:
+    basePath: http://localhost${endpoints.existingApi.port}
+    port: 3001
