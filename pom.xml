@@ -103,8 +103,8 @@
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
                                 <performBeanValidation>true</performBeanValidation>
-                                <modelPackage>com.inditex.myapp.model</modelPackage>
-                                <apiPackage>com.inditex.myapp.controller</apiPackage>
+                                <modelPackage>com.inditex.myapp.infrastructure.controller.model</modelPackage>
+                                <apiPackage>com.inditex.myapp.infrastructure.controller</apiPackage>
                                 <sourceFolder>/src/main/java</sourceFolder>
                             </configOptions>
                         </configuration>
@@ -121,6 +121,8 @@
                             <generateApiTests>false</generateApiTests>
                             <configOptions>
                                 <sourceFolder>/src/main/java</sourceFolder>
+                                <modelPackage>com.inditex.myapp.infrastructure.rest.model</modelPackage>
+                                <apiPackage>com.inditex.myapp.infrastructure.rest</apiPackage>
                             </configOptions>
                             <library>resttemplate</library>
                         </configuration>

@@ -1,8 +1,8 @@
 package com.inditex.myapp.infrastructure.controller;
 
 import com.inditex.myapp.application.service.ProductApplicationService;
-import com.inditex.myapp.controller.ProductApi;
-import com.inditex.myapp.model.ProductDetail;
+
+import com.inditex.myapp.infrastructure.controller.model.ProductDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;

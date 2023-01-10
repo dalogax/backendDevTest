@@ -2,7 +2,7 @@ package com.inditex.myapp.application.service.impl;
 
 import com.inditex.myapp.application.service.ProductApplicationService;
 import com.inditex.myapp.domain.service.ProductService;
-import com.inditex.myapp.model.ProductDetail;
+import com.inditex.myapp.infrastructure.controller.model.ProductDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
