@@ -88,8 +88,23 @@
                                 <modelPackage>com.inditex.myapp.model</modelPackage>
                                 <apiPackage>com.inditex.myapp.controller</apiPackage>
                                 <sourceFolder>/src/main/java</sourceFolder>
-                                <useSpringBoot3>true</useSpringBoot3>
                             </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/existingApis.yml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateApiTests>false</generateApiTests>
+                            <configOptions>
+                                <sourceFolder>/src/main/java</sourceFolder>
+                            </configOptions>
+                            <library>resttemplate</library>
                         </configuration>
                     </execution>
                 </executions>
