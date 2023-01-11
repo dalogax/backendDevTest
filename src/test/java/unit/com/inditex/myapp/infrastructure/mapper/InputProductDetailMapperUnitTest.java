@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
 @ExtendWith(MockitoExtension.class)
-public class InputProductDetailMapperUnitTest {
+class InputProductDetailMapperUnitTest {
 
     @InjectMocks
     private InputProductDetailMapper inputProductDetailMapper;
