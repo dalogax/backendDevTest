@@ -126,7 +126,7 @@
                             <generateApiTests>false</generateApiTests>
                             <configOptions>
                                 <sourceFolder>/src/main/java</sourceFolder>
-                                <modelPackage>com.inditex.myapp.infrastructure.rest.model</modelPackage>
+                                <modelPackage>com.inditex.myapp.application.model</modelPackage>
                                 <apiPackage>com.inditex.myapp.infrastructure.rest</apiPackage>
                             </configOptions>
                             <library>resttemplate</library>
