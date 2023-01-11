@@ -2,7 +2,7 @@ package com.inditex.myapp.infrastructure.controller;
 
 import com.inditex.myapp.application.service.ProductApplicationService;
 
-import com.inditex.myapp.infrastructure.controller.model.ProductDetail;
+import com.inditex.myapp.infrastructure.controller.model.ProductDetailDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +16,7 @@ public class MyAppController implements ProductApi {
     private ProductApplicationService productApplicationService;
 
     @Override
-    public ResponseEntity<Set<ProductDetail>> getProductSimilar(String productId) {
+    public ResponseEntity<Set<ProductDetailDto>> getProductSimilar(String productId) {
         return productApplicationService.getProductSimilar(productId);
     }
 }

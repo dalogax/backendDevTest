@@ -40,7 +40,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductDetail'
+                $ref: '#/components/schemas/ProductDetailResponse'
         '404':
           description: Product Not found
 components:
@@ -53,7 +53,7 @@ components:
       items:
         type: string
         example: ["1","2","3"]
-    ProductDetail:
+    ProductDetailResponse:
       description: 'Product detail'
       type: object
       properties:

@@ -32,8 +32,8 @@ components:
       minItems: 0
       uniqueItems: true
       items:
-        $ref: '#/components/schemas/ProductDetail'
-    ProductDetail:
+        $ref: '#/components/schemas/ProductDetailDto'
+    ProductDetailDto:
       description: 'Product detail'
       type: object
       properties:
