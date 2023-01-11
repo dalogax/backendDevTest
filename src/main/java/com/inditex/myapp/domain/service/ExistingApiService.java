@@ -1,9 +1,13 @@
 package com.inditex.myapp.domain.service;
 
+import com.inditex.myapp.domain.model.ProductDetail;
+
+import java.util.List;
+
 public interface ExistingApiService {
 
-    void getProduct(String productId);
+    ProductDetail getProduct(String productId);
 
-    void getSimilarProducts(String productId);
+    List<String> getSimilarProducts(String productId);
 
 }
