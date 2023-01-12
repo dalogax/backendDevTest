@@ -3,5 +3,8 @@ server:
 
 endpoints:
   existingApi:
-    basePath: http://localhost${endpoints.existingApi.port}
+    url: ${endpoints.existingApi.givenUrl:${endpoints.existingApi.formedUrl}}
+    formedUrl: ${endpoints.existingApi.basePath}:${endpoints.existingApi.port}
+    givenUrl: http://localhost:3001
+    basePath: http://localhost
     port: 3001

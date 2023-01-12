@@ -1,11 +1,11 @@
 package com.inditex.myapp.infrastructure.config;
 
+import com.inditex.myapp.domain.service.ExistingApiService;
 import com.inditex.myapp.domain.service.ProductService;
 import com.inditex.myapp.domain.service.impl.ProductServiceImpl;
 import com.inditex.myapp.infrastructure.ApiClient;
 import com.inditex.myapp.infrastructure.config.endpoint.EndpointsConfig;
 import com.inditex.myapp.infrastructure.rest.DefaultApi;
-import com.inditex.myapp.infrastructure.service.impl.ExistingApiServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 public class BeanConfig {
 
     @Bean
-    public ProductService productService(ExistingApiServiceImpl existingApiService) {
+    public ProductService productService(ExistingApiService existingApiService) {
         return new ProductServiceImpl(existingApiService);
     }
 
@@ -26,7 +26,7 @@ public class BeanConfig {
     @Bean
     public DefaultApi defaultApi(EndpointsConfig endpointsConfig) {
         ApiClient apiClient = new ApiClient();
-        apiClient.setBasePath(endpointsConfig.getExistingApi().getBasePath());
+        apiClient.setBasePath(endpointsConfig.getExistingApi().getUrl());
         return new DefaultApi(apiClient);
     }
 }

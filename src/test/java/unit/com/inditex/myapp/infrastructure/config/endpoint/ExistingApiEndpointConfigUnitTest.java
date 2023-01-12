@@ -9,11 +9,9 @@ class ExistingApiEndpointConfigUnitTest {
     @Test
     void creationTest() {
         ExistingApiEndpointConfig existingApiEndpointConfig = new ExistingApiEndpointConfig();
-        existingApiEndpointConfig.setBasePath("TEST");
-        existingApiEndpointConfig.setPort(0);
+        existingApiEndpointConfig.setUrl("TEST");
 
         Assertions.assertNotNull(existingApiEndpointConfig);
-        Assertions.assertNotNull(existingApiEndpointConfig.getBasePath());
-        Assertions.assertNotNull(existingApiEndpointConfig.getPort());
+        Assertions.assertNotNull(existingApiEndpointConfig.getUrl());
     }
 }
