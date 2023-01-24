@@ -1,0 +1,9 @@
+server:
+  port: 5000
+
+endpoints:
+  existingApi:
+    url: ${endpoints.existingApi.givenUrl:${endpoints.existingApi.formedUrl}}
+    formedUrl: ${endpoints.existingApi.basePath}:${endpoints.existingApi.port}
+    basePath: http://localhost
+    port: ${wiremock.server.port}
