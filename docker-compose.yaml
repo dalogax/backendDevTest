@@ -1,0 +1,35 @@
+version: "3.3"
+services:
+  influxdb:
+    image: influxdb:1.8.2
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=k6
+  grafana:
+    image: grafana/grafana:8.1.2
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+    volumes:
+      - ./shared/grafana:/etc/grafana/provisioning/
+  simulado:
+    image : ldabiralai/simulado:latest
+    ports:
+      - "3001:80"
+    volumes:
+      - ./shared/simulado:/app
+    command: ./bin/simulado -f /app/mocks.json
+  k6:
+    image: loadimpact/k6:0.28.0
+    ports:
+      - "6565:6565"
+    volumes:
+      - ./shared/k6:/scripts
+    environment:
+      - K6_OUT=influxdb=http://influxdb:8086/k6
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
