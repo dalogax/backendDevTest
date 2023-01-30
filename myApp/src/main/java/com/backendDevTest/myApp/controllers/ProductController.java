@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -15,12 +16,13 @@ import com.backendDevTest.myApp.model.ProductDetail;
 import com.backendDevTest.myApp.services.ProductService;
 
 @RestController
+@RequestMapping("product")
 public class ProductController {
 	
 	@Autowired
 	private ProductService productService;
 
-	@GetMapping("/product/{productId}/similars")
+	@GetMapping("/{productId}/similars")
 	public ResponseEntity<List<ProductDetail>> getSimilarProductsById(@PathVariable("productId") String id) throws MyAppGenericException{
 		try {
 			return new ResponseEntity<List<ProductDetail>>(this.productService.getSimilarProductsById(id), HttpStatus.OK);
