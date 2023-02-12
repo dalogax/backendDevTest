@@ -19,6 +19,7 @@ public class ProductService {
 		
 		try {
 			RestTemplate restTemplate = new RestTemplate();
+			//TODO: refacto castLIst
 			List<Integer> similarids = Utils.castList(Integer.class, restTemplate.getForObject(Constants.GET_PRODUCT_SIMILAR_IDS.replace("{productId}", id), ArrayList.class));
 			
 			products = similarids
@@ -27,6 +28,7 @@ public class ProductService {
 					.collect(Collectors.toList());
 			
 		} 
+		//TODO: manage better exceptions
 		catch (Exception e) {
 			throw new GenericException("An error occurred while obtaining the similar products");
 		}
