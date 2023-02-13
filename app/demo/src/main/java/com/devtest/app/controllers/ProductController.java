@@ -1,4 +1,4 @@
-package com.example.app.controllers;
+package com.devtest.app.controllers;
 
 import java.util.List;
 
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpServerErrorException;
 
-import com.example.app.entities.Product;
-import com.example.app.services.ProductService;
-import com.example.app.exceptions.GenericException;
-import com.example.app.utils.Constants;
+import com.devtest.app.entities.Product;
+import com.devtest.app.exceptions.GenericException;
+import com.devtest.app.services.ProductService;
+import com.devtest.app.utils.Constants;
 
 @RestController
 @RequestMapping(Constants.PRODUCT)

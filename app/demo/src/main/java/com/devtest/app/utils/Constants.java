@@ -1,4 +1,4 @@
-package com.example.app.utils;
+package com.devtest.app.utils;
 
 public final class Constants {
     public static final String PRODUCT = "product"; 

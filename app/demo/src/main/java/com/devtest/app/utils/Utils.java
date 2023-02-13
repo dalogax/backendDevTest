@@ -1,4 +1,4 @@
-package com.example.app.utils;
+package com.devtest.app.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
