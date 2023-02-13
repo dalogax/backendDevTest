@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.devtest.app.controllers.IProductController;
 import com.devtest.app.entities.Product;
@@ -30,10 +30,12 @@ public class ProductController implements IProductController{
 			return new ResponseEntity<List<Product>>(this.productService.getSimilarProductsById(id), HttpStatus.OK);
 		} 
         catch (GenericException e) {
-			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST);
+			throw new ResponseStatusException(
+				HttpStatus.BAD_REQUEST, e.getMessage());
 		} 
         catch (Exception e) {
-			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new ResponseStatusException(
+				HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		}
 	}
 }

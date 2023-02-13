@@ -22,22 +22,15 @@ public class ProductService implements IProductService {
 
 		List<Product> products = new ArrayList<>();
 		
-		try {
-			String[] similarProductsIds = productHelper.getSimilarProductsIds(id);
-			if(similarProductsIds == null) throw new GenericException("Not similar products found");
+		String[] similarProductsIds = productHelper.getSimilarProductsIds(id);
+		if(similarProductsIds == null) throw new GenericException("Not similar products found");
 
-			for (String similarId : similarProductsIds) {
-				Product product = productHelper.getProductById(similarId);
-				if (product != null) {
-					products.add(product);
-				}
-			}	
-		} 
-
-		//TODO: manage better exceptions
-		catch (Exception e) {
-			throw new GenericException("An error occurred while obtaining the similar products");
-		}
+		for (String similarId : similarProductsIds) {
+			Product product = productHelper.getProductById(similarId);
+			if (product != null) {
+				products.add(product);
+			}
+		}	
 		
 		return products;
 	}
