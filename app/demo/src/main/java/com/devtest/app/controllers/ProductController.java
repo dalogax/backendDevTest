@@ -13,7 +13,7 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import com.devtest.app.entities.Product;
 import com.devtest.app.exceptions.GenericException;
-import com.devtest.app.services.ProductService;
+import com.devtest.app.services.impl.ProductService;
 import com.devtest.app.utils.Constants;
 
 @RestController
@@ -29,7 +29,7 @@ public class ProductController {
 			return new ResponseEntity<List<Product>>(this.productService.getSimilarProductsById(id), HttpStatus.OK);
 		} 
         catch (GenericException e) {
-			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Product " + id + " not found");
+			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST);
 		} 
         catch (Exception e) {
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
