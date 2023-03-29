@@ -19,7 +19,7 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/product/{productId}/similar")
-    public ResponseEntity<List<ProductDetail>> getSimilarProduct(@PathVariable(value="productId") String productId) throws Exception{
+    public ResponseEntity<List<ProductDetail>> getSimilarProduct(@PathVariable(value="productId") String productId){
         //log.info("ProductController.getSimilarProduct params {}", productId);
 
         List<ProductDetail> productList = productService.getProductSimilar(productId);
