@@ -2,6 +2,7 @@ package com.example.proxy.client;
 
 import com.example.proxy.dto.ProductDetailDTO;
 import com.example.proxy.dto.SimilarProductsDTO;
+import com.example.proxy.utils.Mapper;
 import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class ProductClient {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == HttpStatus.OK.value()) {
-                return mappingResponseSimilarProductsDTO(response.body());
+                return Mapper.jsonResponseToSimilarProductsDTO(response.body());
             }
 
         } catch (Exception e) {
@@ -45,7 +46,7 @@ public class ProductClient {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == HttpStatus.OK.value()) {
-                return mappingResponseProductDetailDTO(response.body());
+                return Mapper.jsonResponseToProductDetailDTO(response.body());
             }
 
             if (response.statusCode() == HttpStatus.NOT_FOUND.value()) {
@@ -56,15 +57,5 @@ public class ProductClient {
             throw new Exception(ex);
         }
 
-    }
-
-    private SimilarProductsDTO mappingResponseSimilarProductsDTO(String json) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(json, SimilarProductsDTO.class);
-    }
-
-    private ProductDetailDTO mappingResponseProductDetailDTO(String json) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(json, ProductDetailDTO.class);
     }
 }
