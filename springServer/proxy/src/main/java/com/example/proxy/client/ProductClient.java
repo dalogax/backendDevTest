@@ -37,6 +37,10 @@ public class ProductClient {
 
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
+            if (response.statusCode() == HttpStatus.OK.value()) {
+                return Mapper.jsonResponseToSimilarProductsDTO(response.body());
+            }
+
             if (response.statusCode() == HttpStatus.OK.value())
                 similarProductsDTO = Mapper.jsonResponseToSimilarProductsDTO(response.body());
 
@@ -75,5 +79,6 @@ public class ProductClient {
             throw new NotFoundException("Product not Found");
 
         return productDetailDTO;
+
     }
 }
