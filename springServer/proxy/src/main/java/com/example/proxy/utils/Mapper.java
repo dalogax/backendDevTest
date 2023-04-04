@@ -11,7 +11,7 @@ public class Mapper {
         ObjectMapper objectMapper = new ObjectMapper();
         SimilarProductsDTO similarProductsDTO = new SimilarProductsDTO();
         int[] ids = objectMapper.readValue(json, int[].class);
-        for(int id : ids) {
+        for (int id : ids) {
             similarProductsDTO.getIds().add(String.valueOf(id));
         }
 

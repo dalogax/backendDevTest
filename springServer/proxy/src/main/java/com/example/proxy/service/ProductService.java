@@ -12,6 +12,7 @@ import java.util.List;
 @Service
 public class ProductService implements IProductService {
     private final ProductClient productClient;
+
     public ProductService(ProductClient productClient) {
         this.productClient = productClient;
     }
@@ -21,7 +22,7 @@ public class ProductService implements IProductService {
         List<ProductDetailDTO> productDetailDTOList = new ArrayList<>();
         SimilarProductsDTO similarProducts = productClient.getSimilarProducts(productId);
 
-        similarProducts.getIds().forEach( id -> {
+        similarProducts.getIds().forEach(id -> {
             productDetailDTOList.add(productClient.getProductDetail(id));
         });
 

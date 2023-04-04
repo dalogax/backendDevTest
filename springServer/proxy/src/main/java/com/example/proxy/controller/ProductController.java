@@ -15,11 +15,13 @@ import java.util.List;
 @RequestMapping("/product")
 public class ProductController {
     private final ProductService productService;
+
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
+
     @GetMapping(path = "/{productId}/similar")
-    public ResponseEntity<List<ProductDetailDTO>> getSimilarProducts(@PathVariable(value="productId") String productId) {
+    public ResponseEntity<List<ProductDetailDTO>> getSimilarProducts(@PathVariable(value = "productId") String productId) {
         return new ResponseEntity<>(productService.getSimilarProducts(productId), HttpStatus.OK);
     }
 }

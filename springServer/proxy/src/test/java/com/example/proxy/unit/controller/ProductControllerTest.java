@@ -28,6 +28,7 @@ public class ProductControllerTest {
     ProductController productController;
     @MockBean
     ProductService productService;
+
     @Test
     public void testGetSimilarProductOk() {
         //given
@@ -54,7 +55,7 @@ public class ProductControllerTest {
 
         //then
         APIException exception = assertThrows(NotFoundException.class, () -> {
-           productController.getSimilarProducts("1");
+            productController.getSimilarProducts("1");
         });
         assertEquals(HttpStatus.NOT_FOUND.value(), exception.getStatus());
         assertEquals("Product Not Found", exception.getMessage());
