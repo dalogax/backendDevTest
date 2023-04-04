@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ProxyApplication {
     private static final Logger logg = LogManager.getLogger(ProductController.class);
+
     public static void main(String[] args) {
         SpringApplication.run(ProxyApplication.class, args);
         logg.info("Server up");
