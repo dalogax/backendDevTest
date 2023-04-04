@@ -40,3 +40,5 @@ gradlew
 gradlew.bat
 gradle-wrapper.jar
 gradle-wrapper.properties
+
+.DS_Store

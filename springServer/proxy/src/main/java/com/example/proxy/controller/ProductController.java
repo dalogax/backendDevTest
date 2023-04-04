@@ -19,7 +19,7 @@ public class ProductController {
         this.productService = productService;
     }
     @GetMapping(path = "/{productId}/similar")
-    public ResponseEntity<List<ProductDetailDTO>> getSimilarProducts (@PathVariable(value="productId") String productId) {
-        return new ResponseEntity<>(productService.getSimilarProducts(), HttpStatus.OK);
+    public ResponseEntity<List<ProductDetailDTO>> getSimilarProducts(@PathVariable(value="productId") String productId) {
+        return new ResponseEntity<>(productService.getSimilarProducts(productId), HttpStatus.OK);
     }
 }
