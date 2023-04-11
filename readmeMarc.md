@@ -3,7 +3,7 @@
 The purpose of this file is to explain and detail the implementation of the application, as well as to highlight other 
 aspects.
 
-### How to build the app?
+### How to execute the app with docker?
 The app can be build in two different ways, at the same time that you run grafana, simulado and influxdb or only running
 the app alone.
 
@@ -17,6 +17,14 @@ docker build -t app -f Dockerfile .
 ```
 ```
 docker run -it -p 5000:5000 app .
+```
+### How to execute the app without docker?
+There is another option to execute the application without using docker. The steps to execute it, are only two:
+```
+mvn clean install
+```
+```
+mvn spring-boot:run
 ```
 
 ### Some request examples

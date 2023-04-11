@@ -24,6 +24,11 @@ public class ProductController {
 
         List<ProductDetail> productList = productService.getProductSimilar(productId);
 
-        return new ResponseEntity<>(productList, HttpStatus.OK);
+        if(productList.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        else {
+            return new ResponseEntity<>(productList, HttpStatus.OK);
+        }
     }
 }

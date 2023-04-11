@@ -47,13 +47,11 @@ public class WebMockTest {
 
     @Test
     public void shouldReturnNotFoundFromServiceTest() throws Exception {
-        ArrayList<?> arrayListReturned = new ArrayList();
         List<ProductDetail> productDetailList = new ArrayList<>();
 
-        when(productService.getProductSimilar("5")).thenReturn(productDetailList);
+        when(productService.getProductSimilar("6")).thenReturn(productDetailList);
 
-        this.mockMvc.perform(get("/product/5/similar"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(arrayListReturned.toString()));
+        this.mockMvc.perform(get("/product/6/similar"))
+                .andExpect(status().isNotFound());
     }
 }
