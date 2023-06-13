@@ -51,7 +51,7 @@ GET:
  
 Response:
 
-{
+'{
     "method": "GET",
     "status": 200,
     "path": "/product/3",
@@ -63,7 +63,7 @@ Response:
     },
     "headers": null,
     "isRegexPah": false
-}
+}'
 
 
 
@@ -76,7 +76,7 @@ GET:
 
  Response:
 
- {
+ '{
     "method": "GET",
     "status": 200,
     "path": "/product/14/similarids",
@@ -102,7 +102,7 @@ GET:
     ],
     "headers": null,
     "isRegexPah": false
-}
+}'
 
 
 :electron::electron::electron::electron::electron:
