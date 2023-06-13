@@ -31,3 +31,23 @@ The following topics will be considered:
 - Code clarity and maintainability
 - Performance
 - Resilience
+
+:electron::electron::electron::electron:
+DEVELOPMENT:
+
+you can try the url with postman, for productId:
+
+GET:
+
+ http://localhost:8080/product/3
+ 
+ 
+
+for similarids
+
+GET:
+
+ http://localhost:8080/product/14/similarids
+
+ 
+:electron::electron::electron::electron::electron:
