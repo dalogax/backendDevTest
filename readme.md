@@ -50,7 +50,6 @@ GET:
  
  
 Response:
-
 `{
     "method": "GET",
     "status": 200,
@@ -75,7 +74,6 @@ GET:
 
 
  Response:
-
  `{
     "method": "GET",
     "status": 200,
