@@ -42,7 +42,6 @@ You just need to download the project and update the dependencies in the build.g
 
 Once downloaded, you can run clean, build and bootRun then the application will be up and running.
 
-The application simulates one conexion to Data Base, although it could use JPA,  it does not do because this is not requeriement.
 
 you can test the url with postman, for productId:
 
