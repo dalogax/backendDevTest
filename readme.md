@@ -34,9 +34,15 @@ The following topics will be considered:
 
 :electron::electron::electron::electron:
 
-DEVELOPMENT:
+## Development:
 
-you can try the url with postman, for productId:
+I used hexagonal architecture for the solution, to show the three layers of structure Application, Domain and Infrastructure.
+
+You just need to download the project and update the dependencies in the build.gradle file.
+
+Once downloaded, you can run clean, build and bootRun then the application will be up and running.
+
+you can test the url with postman, for productId:
 
 GET:
 
