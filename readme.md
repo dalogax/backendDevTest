@@ -51,7 +51,8 @@ GET:
  
 Response:
 
-```{
+```
+{
     "method": "GET",
     "status": 200,
     "path": "/product/3",
@@ -64,7 +65,7 @@ Response:
     "headers": null,
     "isRegexPah": false
 }
-
+```
 
 
 for similarids
@@ -75,7 +76,8 @@ GET:
 
 
  Response:
- ```{
+ ```
+ {
     "method": "GET",
     "status": 200,
     "path": "/product/14/similarids",
