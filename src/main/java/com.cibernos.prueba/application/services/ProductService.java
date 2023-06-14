@@ -5,8 +5,10 @@ import com.cibernos.prueba.domain.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -17,19 +19,13 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public Iterable<Product> getProducts (Integer Id){
+    public List<Integer> getProducts (Integer Id){
         return productRepository.getProducts(Id);
     }
 
-    public Product getProductById(Integer Id){
-        return productRepository.getProductsById(Id);
-    }
+    public Product getProductById(Integer Id) {
 
-    public Product saveProduct(Product product)
-    {
-        return productRepository.saveProduct(product);
-    }
-    public void deleteProductById(Integer Id){
-        /*productRepository.deleteProductById(Id);*/
+            return productRepository.getProductsById(Id);
+
     }
 }

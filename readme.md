@@ -47,24 +47,17 @@ you can test the url with postman, for productId:
 
 GET:
 
- http://localhost:8080/product/3
+ localhost:8080/product/1
  
  
 Response:
 
 ```
 {
-    "method": "GET",
-    "status": 200,
-    "path": "/product/3",
-    "body": {
-        "id": 3,
-        "name": "Camisa",
-        "price": 70,
-        "availability": true
-    },
-    "headers": null,
-    "isRegexPah": false
+    "id": 1,
+    "name": "Shirt",
+    "price": 9.99,
+    "availability": true
 }
 ```
 
@@ -73,38 +66,16 @@ for similarids
 
 GET:
 
- http://localhost:8080/product/14/similarids
+ http://localhost:8080/product/4/similarids
 
 
  Response:
  ```
- {
-    "method": "GET",
-    "status": 200,
-    "path": "/product/14/similarids",
-    "body": [
-        {
-            "id": 1401,
-            "name": "Camisa",
-            "price": 120,
-            "availability": true
-        },
-        {
-            "id": 1402,
-            "name": "Sudadera",
-            "price": 85,
-            "availability": true
-        },
-        {
-            "id": 1403,
-            "name": "Botas",
-            "price": 50,
-            "availability": false
-        }
-    ],
-    "headers": null,
-    "isRegexPah": false
-}
+ [
+    1,
+    2,
+    5
+]
 ```
 
 :electron::electron::electron::electron::electron:

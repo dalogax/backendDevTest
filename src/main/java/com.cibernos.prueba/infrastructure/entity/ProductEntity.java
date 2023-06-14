@@ -13,6 +13,6 @@ public class ProductEntity {
     //GeneratedValue(strategy = GeneratioType.IDENTITY)
     private Integer id;
     private String name;
-    private Integer price;
+    private Double price;
     private Boolean availability;
 }

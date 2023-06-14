@@ -13,6 +13,6 @@ import java.util.UUID;
 public class Product {
     private Integer id;
     private String name;
-    private Integer price;
+    private Double price;
     private Boolean availability;
 }
