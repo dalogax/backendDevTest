@@ -79,3 +79,6 @@ GET:
 ```
 
 :electron::electron::electron::electron::electron:
+
+## Licencia
+- Copyright 2022 ©
