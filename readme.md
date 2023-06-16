@@ -31,3 +31,54 @@ The following topics will be considered:
 - Code clarity and maintainability
 - Performance
 - Resilience
+
+:electron::electron::electron::electron:
+
+## Development:
+
+I used hexagonal architecture for the solution, to show the three layers of structure Application, Domain and Infrastructure.
+
+You just need to download the project and update the dependencies in the build.gradle file.
+
+Once downloaded, you can run clean, build and bootRun then the application will be up and running.
+
+
+you can test the url with postman, for productId:
+
+GET:
+
+ localhost:8080/product/1
+ 
+ 
+Response:
+
+```
+{
+    "id": 1,
+    "name": "Shirt",
+    "price": 9.99,
+    "availability": true
+}
+```
+
+
+for similarids
+
+GET:
+
+ http://localhost:8080/product/4/similarids
+
+
+ Response:
+ ```
+ [
+    1,
+    2,
+    5
+]
+```
+
+:electron::electron::electron::electron::electron:
+
+## Licencia
+- Copyright 2022 ©
