@@ -31,3 +31,16 @@ The following topics will be considered:
 - Code clarity and maintainability
 - Performance
 - Resilience
+
+
+# My Results:
+
+![Results](./assets/grafana_results.png "Results")
+
+## How to run
+
+```bash
+cd products
+./mvnw install
+java -jar target/products-0.0.1-SNAPSHOT.jar
+```
