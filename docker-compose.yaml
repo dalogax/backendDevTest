@@ -33,3 +33,9 @@ services:
       - K6_OUT=influxdb=http://influxdb:8086/k6
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  app:
+    build: .
+    ports:
+      - "5000:8080"
+    depends_on:
+      - simulado
