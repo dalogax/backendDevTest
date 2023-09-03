@@ -22,16 +22,17 @@ public class ProductRepositoryAdapter implements ProductRepository {
 
     @Override
     public List<Product> findProductsById(List<Integer> ids) {
-        Flux<ProductDto> requests = Flux.fromIterable(ids)
-                .flatMap(productId ->
-                        webClient
-                                .get()
-                                .uri("/product/{id}", productId)
-                                .retrieve()
-                                .bodyToMono(ProductDto.class)
+        Flux<Product> requests = Flux.fromIterable(ids)
+                .flatMap(productId -> webClient
+                        .get()
+                        .uri("/product/{id}", productId)
+                        .retrieve()
+                        .bodyToMono(ProductDto.class)
+                        .map(ProductMapper::toDomain)
+                        .onErrorComplete()
                 );
 
-        return Flux.concat(requests).collectList().block().stream().map(ProductMapper::toDomain).toList();
+        return Flux.concat(requests).collectList().block();
     }
 
     @Override
@@ -41,7 +42,6 @@ public class ProductRepositoryAdapter implements ProductRepository {
                 .uri("product/{productId}/similarids", id)
                 .retrieve()
                 .bodyToFlux(Integer.class);
-
 
         return relatedIdsFlux.collectList().block();
 
