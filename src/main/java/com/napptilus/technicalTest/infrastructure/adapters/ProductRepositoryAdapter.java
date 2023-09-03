@@ -16,7 +16,7 @@ public class ProductRepositoryAdapter implements ProductRepository {
     private final WebClient webClient;
 
     public ProductRepositoryAdapter() {
-        this.webClient = WebClient.builder().baseUrl("http://localhost:3001").build();
+        this.webClient = WebClient.builder().baseUrl("http://host.docker.internal:3001").build();
     }
 
 
