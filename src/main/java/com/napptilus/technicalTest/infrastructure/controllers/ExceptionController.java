@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @ControllerAdvice
 public class ExceptionController {
@@ -23,6 +24,18 @@ public class ExceptionController {
         error.setPath(request.getRequestURI());
 
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+
+    @ExceptionHandler(value = WebClientResponseException.class)
+    public ResponseEntity<ErrorDto> webClientNotFoundException(WebClientResponseException exception, HttpServletRequest request) {
+
+        ErrorDto error = new ErrorDto();
+        error.setCode(exception.getStatusCode().toString());
+        error.setErrorMessage(exception.getMessage());
+        error.setPath(request.getRequestURI());
+
+        return new ResponseEntity<>(error, exception.getStatusCode());
 
     }
 
