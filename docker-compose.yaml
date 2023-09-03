@@ -33,3 +33,12 @@ services:
       - K6_OUT=influxdb=http://influxdb:8086/k6
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  api:
+    container_name: api
+    image: napptilus-technical-test
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    restart: always
