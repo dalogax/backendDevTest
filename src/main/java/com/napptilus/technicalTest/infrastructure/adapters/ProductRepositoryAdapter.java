@@ -4,7 +4,9 @@ import com.napptilus.technicalTest.domain.models.Product;
 import com.napptilus.technicalTest.domain.repositories.ProductRepository;
 import com.napptilus.technicalTest.infrastructure.data.dto.ProductDto;
 import com.napptilus.technicalTest.infrastructure.data.mappers.ProductMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
@@ -15,8 +17,8 @@ public class ProductRepositoryAdapter implements ProductRepository {
 
     private final WebClient webClient;
 
-    public ProductRepositoryAdapter() {
-        this.webClient = WebClient.builder().baseUrl("http://host.docker.internal:3001").build();
+    public ProductRepositoryAdapter(@Value("${application.simulado.host}") String applicationSimuladoHost) {
+        this.webClient = WebClient.builder().baseUrl(applicationSimuladoHost).build();
     }
 
 
