@@ -6,6 +6,10 @@ import com.napptilus.technicalTest.infrastructure.data.dto.ProductDto;
 
 public class ProductMapper {
 
+    private ProductMapper() {
+        throw new IllegalStateException("ProductMapper is an utility class, it should not be instantiated.");
+    }
+
     public static Product toDomain(ProductDto productDto) {
         return new Product(productDto.id(), productDto.name(), productDto.price(), productDto.availability());
     }
