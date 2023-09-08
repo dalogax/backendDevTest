@@ -1,15 +1,14 @@
-package com.example.demo.model;
+package com.example.demo.core.domain;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
-@AllArgsConstructor
 public class Product {
 
     private String id;
     private String name;
     private Number price;
     private boolean availability;
-
 }
