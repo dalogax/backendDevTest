@@ -1,0 +1,12 @@
+server:
+  port: 5000
+
+rest-client:
+  timeout: 10 #seconds
+  product:
+    base-url: http://localhost:3001
+    url: ${rest-client.product.base-url}/product
+cache:
+  spring:
+    product-detail-cache:
+      ttl: 100000 #100 seconds on milliseconds
