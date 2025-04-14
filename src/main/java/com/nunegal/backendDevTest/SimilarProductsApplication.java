@@ -1,4 +1,4 @@
-package com.example.backendDevTest;
+package com.nunegal.backendDevTest;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
