@@ -3,8 +3,8 @@ package com.nunegal.backendDevTest.service;
 import com.nunegal.backendDevTest.client.ProductClient;
 import com.nunegal.backendDevTest.model.Product;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,7 +19,7 @@ public class SimilarProductServiceTest {
         SimilarProductService service = new SimilarProductService(mockClient);
 
         String productId = "1";
-        List<Integer> ids = List.of(2, 3);
+        List<Integer> ids = Arrays.asList(2, 3); // ← ¡reemplaza List.of por Arrays.asList!
 
         Product product1 = new Product("2", "Shirt", 9.99, true);
         Product product2 = new Product("3", "Shoes", 19.99, true);

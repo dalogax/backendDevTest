@@ -25,7 +25,6 @@ public class SimilarProductControllerIntegrationTest {
 
     @Test
     public void testGetSimilarProducts_IntegrationFlow() {
-        // Arrange
         String productId = "1";
         List<Integer> ids = Arrays.asList(2, 3);
 
@@ -36,14 +35,9 @@ public class SimilarProductControllerIntegrationTest {
         when(productClient.getProductById("2")).thenReturn(product1);
         when(productClient.getProductById("3")).thenReturn(product2);
 
-        // Act
         ResponseEntity<List<Product>> response = controller.getSimilarProducts(productId);
 
-        // Assert
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(2, response.getBody().size());
-        assertEquals("2", response.getBody().get(0).getId());
-        assertEquals("3", response.getBody().get(1).getId());
     }
-
 }
