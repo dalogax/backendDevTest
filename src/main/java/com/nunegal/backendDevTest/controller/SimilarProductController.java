@@ -27,6 +27,8 @@ public class SimilarProductController {
      * @return Lista de productos similares
      */
     @GetMapping("/{productId}/similar")
+    // De esta forma se puede verificar que el endpoint devuelve el código de estado
+    // correcto y el cuerpo de la respuesta correcto usando postman.
     public ResponseEntity<List<Product>> getSimilarProducts(@PathVariable String productId) {
         List<Product> similarProducts = similarProductService.getSimilarProducts(productId);
         return ResponseEntity.ok(similarProducts);
