@@ -2,6 +2,13 @@ package com.nunegal.backendDevTest.model;
 
 // This class represents a product with its details such as ID, name, price, and availability.
 
+// ✅ ¿Qué hace este cliente?
+// Usa RestTemplate para hacer llamadas HTTP.
+
+// Inyecta la base de la URL desde application.properties (external.api.url).
+
+// Tiene manejo básico de errores envolviendo en RuntimeException.
+
 public class Product {
     private String id;
     private String name;
