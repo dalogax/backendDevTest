@@ -145,4 +145,4 @@ Comandos para nvnw:
 
 ./mvnw clean test
 
- ./mvnw clean install
+./mvnw clean install
