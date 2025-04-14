@@ -1,14 +1,18 @@
 package com.nunegal.backendDevTest.model;
 
+// This class represents a product with its details such as ID, name, price, and availability.
+
 public class Product {
     private String id;
     private String name;
     private Double price;
     private Boolean availability;
 
+    // Default constructor
     public Product() {
     }
 
+    // Parameterized constructor
     public Product(String id, String name, Double price, Boolean availability) {
         this.id = id;
         this.name = name;
@@ -16,7 +20,7 @@ public class Product {
         this.availability = availability;
     }
 
-    // Getters y setters
+    // Getters and setters
     public String getId() {
         return id;
     }

@@ -1,5 +1,8 @@
 package com.nunegal.backendDevTest.client;
 
+// This class is responsible for interacting with the external product API.
+// It provides methods to retrieve similar product IDs and product details by product ID.
+
 import com.nunegal.backendDevTest.model.Product;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -9,14 +12,18 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 import java.util.List;
 
+
+
 @Component
 public class ProductClient {
 
+    // Base URL for the external API, injected from application properties
     @Value("${external.api.url}")
     private String apiBaseUrl;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    // Retrieves a list of similar product IDs for a given product ID
     public List<Integer> getSimilarProductIds(String productId) {
         String url = apiBaseUrl + "/product/" + productId + "/similarids";
 
@@ -28,6 +35,7 @@ public class ProductClient {
         }
     }
 
+    // Retrieves product details for a given product ID
     public Product getProductById(String productId) {
         String url = apiBaseUrl + "/product/" + productId;
 
