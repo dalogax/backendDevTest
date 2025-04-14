@@ -1,0 +1,7 @@
+com/nunegal/backendDevTest/controller/SimilarProductController.class
+com/nunegal/backendDevTest/SimilarProductsApplication.class
+com/nunegal/backendDevTest/service/SimilarProductService.class
+com/nunegal/backendDevTest/exception/GlobalExceptionHandler.class
+com/nunegal/backendDevTest/exception/ProductNotFoundException.class
+com/nunegal/backendDevTest/client/ProductClient.class
+com/nunegal/backendDevTest/model/Product.class
