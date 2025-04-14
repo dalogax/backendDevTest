@@ -1,6 +1,7 @@
 package com.nunegal.backendDevTest.client;
 
 // This class is responsible for interacting with the external product API.
+
 // It provides methods to retrieve similar product IDs and product details by product ID.
 
 import com.nunegal.backendDevTest.model.Product;
@@ -11,8 +12,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
-
-
 
 @Component
 public class ProductClient {
