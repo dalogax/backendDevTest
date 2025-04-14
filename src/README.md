@@ -94,3 +94,31 @@ Manejo más robusto de excepciones HTTP del cliente
 
 ✍️ Autor
 Desarrollado por Nauzet López Mendoza para el proceso de selección de Nunegal Consulting.
+
+Postman Collection:
+https://galactic-capsule-418115.postman.co/workspace/New-Team-Workspace~65780666-254b-4dfb-a883-bd15ccabfd98/request/26244768-c0a1088d-9f44-486f-b54a-12f7a64f48fa?action=share&source=copy-link&creator=26244768&ctx=documentation
+
+GET http://localhost:5000/product/1/similar
+
+Respuesta:
+
+[
+    {
+        "id": "2",
+        "name": "Dress",
+        "price": 19.99,
+        "availability": true
+    },
+    {
+        "id": "3",
+        "name": "Blazer",
+        "price": 29.99,
+        "availability": false
+    },
+    {
+        "id": "4",
+        "name": "Boots",
+        "price": 39.99,
+        "availability": true
+    }
+]
