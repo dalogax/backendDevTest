@@ -122,3 +122,27 @@ Respuesta:
         "availability": true
     }
 ]
+
+✅ Estado final del pom.xml
+
+✅ Java 21 correctamente configurado
+
+✅ Spring Boot 3.2.5 parametrizado con ${spring.boot.version}
+
+✅ maven-compiler-plugin con -parameters
+
+✅ Dependencias de testing modernas (JUnit 5, Mockito)
+
+✅ maven-surefire-plugin actualizado a 3.1.2 (¡perfecto para desactivar tests!)
+
+✅ dependencyManagement con Spring Boot BOM
+
+Comandos para nvnw:
+
+./mvnw spring-boot:run
+
+./nvmw test
+
+./mvnw clean test
+
+ ./mvnw clean install
