@@ -73,5 +73,16 @@
     "body": "{\"id\":\"10000\",\"name\":\"Leather jacket\",\"price\":89.99,\"availability\":true}",
     "delay": 50000,
     "headers": {"Content-Type": "application/json"}
+  },
+  {
+    "path": "/product/4/similar",
+    "body": "[{\"message\":\"Product not found\"}]",
+    "status": 404,
+    "headers": {"Content-Type": "application/json"}
+  },
+  {
+    "path": "/product/10000/similar",
+    "body": "[{\"id\":\"100000\",\"name\":\"Wool jacket\",\"price\":69.99,\"availability\":true}]",
+    "headers": {"Content-Type": "application/json"}
   }
 ]

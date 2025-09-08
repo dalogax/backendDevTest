@@ -5,6 +5,22 @@ info:
 servers:
   - url: 'http://localhost:3001'
 paths:
+  '/product':
+    get:
+      operationId: getAllProducts
+      summary: Products
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductDetail'
+        '404':
+          description: Product Not found
+
   '/product/{productId}/similarids':
     parameters:
       - schema:

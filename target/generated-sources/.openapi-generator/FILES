@@ -1,0 +1,8 @@
+.openapi-generator-ignore
+README.md
+pom.xml
+src/main/java/org/backendDevTest/infra/api/ApiUtil.java
+src/main/java/org/backendDevTest/infra/api/ProductApi.java
+src/main/java/org/backendDevTest/infra/model/ProductDetail.java
+src/main/java/org/backendDevTest/infra/model/ProductDetailBasic.java
+src/main/java/org/backendDevTest/infra/model/ProductFullDetail.java

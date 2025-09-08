@@ -1,0 +1,7 @@
+org/backendDevTest/infra/api/ProductApi.class
+org/backendDevTest/infra/model/ProductDetailBasic.class
+org/backendDevTest/infra/api/ProductApiControllerImpl.class
+org/backendDevTest/infra/model/ProductFullDetail.class
+org/backendDevTest/infra/api/ApiUtil.class
+org/backendDevTest/BackendDevTestApplication.class
+org/backendDevTest/infra/model/ProductDetail.class

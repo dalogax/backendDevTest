@@ -1,0 +1,96 @@
+openapi: 3.0.0
+info:
+  title: Combined SimilarProducts API
+  version: '1.0'
+servers:
+  - url: 'http://localhost:5000'
+  - url: 'http://localhost:3001'
+
+paths:
+  /product:
+    get:
+      operationId: getAllProducts
+      summary: Products
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductDetail'
+        '404':
+          description: Product Not found
+
+  /product/{productId}/similar:
+    get:
+      operationId: getSimilarProductDetails
+      summary: Similar products
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductDetail'
+        '404':
+          description: Product Not found
+
+  /product/{productId}/similarids:
+    get:
+      operationId: getSimilarProductsIds
+      summary: Gets the ids of similar products
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimilarProductIds'
+
+  /product/{productId}:
+    get:
+      operationId: getProductId
+      summary: Gets a product detail
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetail'
+        '404':
+          description: Product Not found
+
+components:
+  schemas:
+    ProductDetail:
+      type: object
+      $ref: './similarProducts.yaml#/components/schemas/ProductDetail'
+      description: List of similar products with full details
+    SimilarProductIds:
+      type: array
+      items:
+        type: string
+      description: List of similar product IDs
