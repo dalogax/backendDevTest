@@ -1,0 +1,35 @@
+server:
+  port: 5000
+
+clients:
+  products:
+    base-url: http://localhost:3001
+    connect-timeout-ms: 4000
+    read-timeout-ms: 15000
+    product: /product/{id}
+    similar-ids: /product/{id}/similarids
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      products:
+        slidingWindowSize: 20
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        registerHealthIndicator: true
+  retry:
+    instances:
+      products:
+        maxAttempts: 2
+        waitDuration: 50ms
+        ignoreExceptions:
+          - com.example.similarproducts.exception.NotFoundException
+  timelimiter:
+    instances:
+      products:
+        timeoutDuration: 6s
+
+logging:
+  level:
+    reactor.netty.http.client: DEBUG
+    reactor.netty.transport: DEBUG
