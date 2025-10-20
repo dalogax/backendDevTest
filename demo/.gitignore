@@ -1,3 +1,6 @@
+### El zip generado por springboot initializr ###
+*.zip
+
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
