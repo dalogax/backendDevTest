@@ -10,7 +10,7 @@ Crear un endpoint que, dado un producto, devuelva los detalles completos de sus 
 ## Stack Tecnológico
 
 - **Java 21**
-- **Spring Boot 3.3.x**
+- **Spring Boot 3.5.x**
 - **Spring WebFlux** - Para llamadas HTTP reactivas y paralelas
 - **Lombok** - Reducción de código boilerplate
 - **Maven** - Gestión de dependencias
