@@ -1,0 +1,12 @@
+{
+	"name": "mockServer",
+	"version": "1.0.0",
+	"description": "Mock server que remplaza a simulado para garantizar la seguridad",
+	"main": "server.js",
+	"scripts": {
+		"start": "node server.js"
+	},
+	"dependencies": {
+		"express": "^4.18.2"
+	}
+}
