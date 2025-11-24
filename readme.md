@@ -19,7 +19,7 @@ First of all, you may need to enable file sharing for the `shared` folder on you
 Then you can start the mocks and other needed infrastructure with the following command.
 
 ```
-docker-compose up -d mock-server influxdb grafana
+docker-compose up -d simulado influxdb grafana
 ```
 
 Check that mocks are working with a sample request to [http://localhost:3001/product/1/similarids](http://localhost:3001/product/1/similarids).
