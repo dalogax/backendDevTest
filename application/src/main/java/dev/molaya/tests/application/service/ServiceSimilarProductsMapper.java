@@ -4,10 +4,9 @@ import dev.molaya.tests.application.in.dto.GetSimilarProductsInput;
 import dev.molaya.tests.application.out.dto.ProductCommand;
 import dev.molaya.tests.domain.exceptions.BadParametersException;
 import jakarta.validation.constraints.NotNull;
+import java.util.Optional;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
-import java.util.Optional;
 
 @Mapper(componentModel = "spring")
 public interface ServiceSimilarProductsMapper {

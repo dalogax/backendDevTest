@@ -26,7 +26,6 @@ public class SimilarProductsService implements GetSimilarProductsUseCase {
     @Override
     public Flux<@NonNull Product> getSimilarProducts(@NotNull GetSimilarProductsInput input) {
         final var command = mapper.toProductCommandSafe(input);
-
         return Flux.defer(() -> getProductCommandsForIdsSafe(command)
                         .flatMap(port::getProductDetail, properties.parallelRequests()))
                 .doOnError(e -> log.error("Error fetching similar products for product: {}", input.productId(), e))

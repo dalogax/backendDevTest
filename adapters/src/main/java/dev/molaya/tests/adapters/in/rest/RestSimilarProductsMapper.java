@@ -4,13 +4,12 @@ import dev.molaya.tests.adapters.in.rest.gen.openapi.dto.ProductDetail;
 import dev.molaya.tests.application.in.dto.GetSimilarProductsInput;
 import dev.molaya.tests.domain.Product;
 import dev.molaya.tests.domain.exceptions.BadParametersException;
+import java.util.Optional;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Optional;
 
 @Mapper
 public interface RestSimilarProductsMapper {

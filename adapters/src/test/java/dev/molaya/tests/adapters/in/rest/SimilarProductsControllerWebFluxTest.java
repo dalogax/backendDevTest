@@ -1,5 +1,10 @@
 package dev.molaya.tests.adapters.in.rest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
+
 import dev.molaya.tests.adapters.AdapterTestApplication;
 import dev.molaya.tests.adapters.Stubs;
 import dev.molaya.tests.adapters.in.rest.gen.openapi.dto.ProductDetail;
@@ -16,11 +21,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
 
 @WebFluxTest(controllers = SimilarProductsController.class)
 @Import(AdapterTestApplication.class)
@@ -51,7 +51,7 @@ class SimilarProductsControllerWebFluxTest {
             when(mapper.toRestProductDetail(any())).thenAnswer(callRealMapper());
             final var response = webTestClient
                     .get()
-                    .uri("/products/{id}/similar", productId)
+                    .uri("/product/{id}/similar", productId)
                     .exchange()
                     .expectStatus()
                     .isOk()
@@ -72,7 +72,7 @@ class SimilarProductsControllerWebFluxTest {
             when(useCase.getSimilarProducts(any())).thenReturn(Flux.empty());
             final var response = webTestClient
                     .get()
-                    .uri("/products/{id}/similar", productId)
+                    .uri("/product/{id}/similar", productId)
                     .exchange()
                     .expectStatus()
                     .isOk()
