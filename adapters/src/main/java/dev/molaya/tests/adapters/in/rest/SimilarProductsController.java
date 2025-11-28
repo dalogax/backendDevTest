@@ -1,6 +1,7 @@
 package dev.molaya.tests.adapters.in.rest;
 
-import dev.molaya.tests.adapters.in.rest.dto.ProductDetail;
+import dev.molaya.tests.adapters.in.rest.gen.openapi.dto.ProductDetail;
+import dev.molaya.tests.adapters.in.rest.gen.openapi.ProductGenApi;
 import dev.molaya.tests.application.in.GetSimilarProductsUseCase;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;

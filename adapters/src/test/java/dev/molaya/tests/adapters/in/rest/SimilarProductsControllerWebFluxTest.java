@@ -1,13 +1,8 @@
 package dev.molaya.tests.adapters.in.rest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
-
 import dev.molaya.tests.adapters.AdapterTestApplication;
 import dev.molaya.tests.adapters.Stubs;
-import dev.molaya.tests.adapters.in.rest.dto.ProductDetail;
+import dev.molaya.tests.adapters.in.rest.gen.openapi.dto.ProductDetail;
 import dev.molaya.tests.application.in.GetSimilarProductsUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -21,6 +16,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 @WebFluxTest(controllers = SimilarProductsController.class)
 @Import(AdapterTestApplication.class)

@@ -14,11 +14,11 @@
     <name>Adapters Module</name>
 
     <properties>
-        <openapi.out.client>dev.molaya.tests.adapters.out.client</openapi.out.client>
-        <openapi.in.rest>dev.molaya.tests.adapters.in.rest</openapi.in.rest>
+        <openapi.out.client>dev.molaya.tests.adapters.out.client.gen.openapi</openapi.out.client>
+        <openapi.in.rest>dev.molaya.tests.adapters.in.rest.gen.openapi</openapi.in.rest>
         <springdoc-openapi-starter-webmvc-ui.version>2.8.6</springdoc-openapi-starter-webmvc-ui.version>
         <openapi-generator-maven-plugin.apiNameSuffix>GenApi</openapi-generator-maven-plugin.apiNameSuffix>
-        <jacoco-maven-plugin.excludes>**/*${openapi-generator-maven-plugin.apiNameSuffix}.java</jacoco-maven-plugin.excludes>
+        <jacoco-maven-plugin.excludes>**/auth/**,**/gen/**</jacoco-maven-plugin.excludes>
     </properties>
 
     <dependencies>

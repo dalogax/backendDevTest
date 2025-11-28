@@ -1,16 +1,18 @@
 package dev.molaya.tests.adapters.out.client;
 
+import dev.molaya.tests.adapters.out.client.gen.openapi.DefaultGenApi;
 import dev.molaya.tests.application.out.ProductRepositoryPort;
 import dev.molaya.tests.application.out.dto.ProductCommand;
 import dev.molaya.tests.domain.Product;
 import jakarta.validation.constraints.NotNull;
-import java.util.Collections;
-import java.util.Set;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
+import java.util.Collections;
+import java.util.Set;
 
 @Slf4j
 @Service

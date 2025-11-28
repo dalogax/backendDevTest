@@ -1,6 +1,6 @@
 package dev.molaya.tests.adapters.out.client;
 
-import dev.molaya.tests.adapters.out.client.dto.ProductDetail;
+import dev.molaya.tests.adapters.out.client.gen.openapi.dto.ProductDetail;
 import dev.molaya.tests.domain.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
