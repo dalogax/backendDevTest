@@ -1,4 +1,3 @@
-version: "3.3"
 services:
   influxdb:
     image: influxdb:1.8.2
@@ -33,4 +32,18 @@ services:
       - K6_OUT=influxdb=http://influxdb:8086/k6
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  back-prod:
+    build:
+      context: .
+      args:
+        PROJECT_VERSION: 0.0.1-SNAPSHOT
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      SERVER_PORT: 5000
+    ports:
+      - "5000:5000"
+
+networks:
+  default:
+    driver: "bridge"
 

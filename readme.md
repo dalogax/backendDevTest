@@ -128,14 +128,20 @@ Future improvements and features that could be added to enhance the project and 
 You can run the same test we will put through your application. You just need to have docker installed.
 
 First of all, you may need to enable file sharing for the `shared` folder on your docker dashboard -> settings -> resources -> file sharing.
+Then execute:
+
+```bash
+mvn clean install
+```
 
 Then you can start the mocks and other needed infrastructure with the following command.
 
 ```
-docker-compose up -d simulado influxdb grafana
+docker-compose up -d simulado influxdb grafana back-prod
 ```
 
 Check that mocks are working with a sample request to [http://localhost:3001/product/1/similarids](http://localhost:3001/product/1/similarids).
+* And verify application is back-prod is up http://localhost:5000/actuator/health
 
 To execute the test run:
 
