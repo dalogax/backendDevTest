@@ -1,0 +1,5 @@
+server.port: 5000
+config:
+  similar-products:
+    limit: 30
+    parallel-requests: 10

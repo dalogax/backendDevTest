@@ -1,0 +1,25 @@
+config: ## Added to handle maximum limits of similar products and parallel requests globally (solving tradeoffs by millions of records)
+  similar-products:
+    limit: 30 # Modify with specific limit needed (not required new release)
+    parallel-requests: 10
+
+server.port: 5000
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+    operationSorter: method
+
+spring:
+  devtools:
+    add-properties: false
+    restart:
+      enabled: false
+  application:
+    name: "@pom.artifactId@"
+### Disabled because is redundant while using Reactive WebFlux
+#  threads:
+#    virtual:
+#      enabled: true
