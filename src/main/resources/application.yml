@@ -1,0 +1,34 @@
+server:
+  port: 5000
+
+spring:
+  application:
+    name: similar-products-api
+
+logging:
+  level:
+    com.zara.similarproducts: INFO
+    org.springframework.web.reactive.function.client: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+management:
+  server:
+    port: 5001
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+app:
+  external-api:
+    base-url: http://localhost:3001
+    timeout:
+      similar-ids: 2s
+      product-detail: 8s
+      overall: 10s
+    concurrency:
+      max-parallel: 10

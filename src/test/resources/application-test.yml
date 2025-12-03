@@ -1,0 +1,14 @@
+logging:
+  level:
+    com.zara.similarproducts: DEBUG
+    org.springframework.web.reactive.function.client: DEBUG
+
+app:
+  external-api:
+    base-url: http://localhost:3001
+    timeout:
+      similar-ids: 1s
+      product-detail: 2s
+      overall: 5s
+    concurrency:
+      max-parallel: 5
