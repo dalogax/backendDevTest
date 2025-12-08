@@ -1,6 +1,11 @@
 server:
   port: 5000
 
+spring:
+  threads:
+    virtual:
+      enabled: true
+
 similar-products:
   max-concurrent-calls: 10
 
@@ -19,11 +24,11 @@ resilience4j:
         retry-exceptions:
           - java.io.IOException
           - java.util.concurrent.TimeoutException
-          - org.springframework.web.reactive.function.client.WebClientRequestException
-          - org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError
-          - org.springframework.web.reactive.function.client.WebClientResponseException.BadGateway
-          - org.springframework.web.reactive.function.client.WebClientResponseException.ServiceUnavailable
-          - org.springframework.web.reactive.function.client.WebClientResponseException.GatewayTimeout
+          - org.springframework.web.client.ResourceAccessException
+          - org.springframework.web.client.HttpServerErrorException.InternalServerError
+          - org.springframework.web.client.HttpServerErrorException.BadGateway
+          - org.springframework.web.client.HttpServerErrorException.ServiceUnavailable
+          - org.springframework.web.client.HttpServerErrorException.GatewayTimeout
   circuitbreaker:
     instances:
       productService:
@@ -34,6 +39,11 @@ resilience4j:
         wait-duration-in-open-state: 5s
         permitted-number-of-calls-in-half-open-state: 3
         ignore-exceptions:
-          - org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
-          - org.springframework.web.reactive.function.client.WebClientResponseException.NotFound
+          - org.springframework.web.client.HttpClientErrorException.BadRequest
+          - org.springframework.web.client.HttpClientErrorException.NotFound
+  bulkhead:
+    instances:
+      productService:
+        maxConcurrentCalls: 20
+        maxWaitDuration: 200ms
 

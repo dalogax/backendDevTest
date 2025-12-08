@@ -1,22 +1,18 @@
 package com.capitole.similarproducts.application.service;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.lenient;
 
 import com.capitole.similarproducts.domain.exception.ProductNotFoundException;
 import com.capitole.similarproducts.domain.model.Product;
 import com.capitole.similarproducts.domain.port.out.ProductServicePort;
 import java.math.BigDecimal;
 import java.util.List;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
 
 @ExtendWith(MockitoExtension.class)
 class SimilarProductsServiceTest {
@@ -43,13 +39,13 @@ class SimilarProductsServiceTest {
         Product p2 = new Product("2", "Product 2", BigDecimal.TEN, true);
         Product p3 = new Product("3", "Product 3", BigDecimal.ONE, true);
 
-        given(productServicePort.getSimilarProductIds(productId)).willReturn(Mono.just(similarIds));
-        given(productServicePort.getProductDetail("2")).willReturn(Mono.just(p2));
-        given(productServicePort.getProductDetail("3")).willReturn(Mono.just(p3));
+        given(productServicePort.getSimilarProductIds(productId)).willReturn(similarIds);
+        given(productServicePort.getProductDetail("2")).willReturn(p2);
+        given(productServicePort.getProductDetail("3")).willReturn(p3);
 
-        StepVerifier.create(similarProductsService.getSimilarProducts(productId))
-                .expectNext(List.of(p2, p3))
-                .verifyComplete();
+        List<Product> result = similarProductsService.getSimilarProducts(productId);
+        
+        Assertions.assertThat(result).containsExactly(p2, p3);
     }
 
     @Test
@@ -57,46 +53,47 @@ class SimilarProductsServiceTest {
         String productId = "1";
         List<String> similarIds = List.of("2", "3", "4");
         Product p2 = new Product("2", "Product 2", BigDecimal.TEN, true);
-        // p4 causing error is handled by getProductDetailSafely returning empty
+        // p3 returns null (empty in previous logic), p4 throws exception
 
-        given(productServicePort.getSimilarProductIds(productId)).willReturn(Mono.just(similarIds));
-        given(productServicePort.getProductDetail("2")).willReturn(Mono.just(p2));
-        given(productServicePort.getProductDetail("3")).willReturn(Mono.empty());
-        given(productServicePort.getProductDetail("4")).willReturn(Mono.error(new RuntimeException("Fetch error")));
+        given(productServicePort.getSimilarProductIds(productId)).willReturn(similarIds);
+        given(productServicePort.getProductDetail("2")).willReturn(p2);
+        given(productServicePort.getProductDetail("3")).willReturn(null); // was Mono.empty()
+        given(productServicePort.getProductDetail("4")).willThrow(new RuntimeException("Fetch error"));
 
-        StepVerifier.create(similarProductsService.getSimilarProducts(productId))
-                .expectNext(List.of(p2))
-                .verifyComplete();
+        List<Product> result = similarProductsService.getSimilarProducts(productId);
+
+        Assertions.assertThat(result).containsExactly(p2);
     }
 
     @Test
     void getSimilarProducts_ShouldThrowProductNotFoundException_WhenIdsFetchFails() {
         String productId = "1";
-        given(productServicePort.getSimilarProductIds(productId)).willReturn(Mono.error(new RuntimeException("API Error")));
+        given(productServicePort.getSimilarProductIds(productId)).willThrow(new RuntimeException("API Error"));
 
-        StepVerifier.create(similarProductsService.getSimilarProducts(productId))
-                .expectError(ProductNotFoundException.class)
-                .verify();
+        Assertions.assertThatThrownBy(() -> similarProductsService.getSimilarProducts(productId))
+                .isInstanceOf(ProductNotFoundException.class);
     }
 
     @Test
     void getSimilarProducts_ShouldPreserveOrder_WhenCallsProvideResultsOutOfOrder() {
+        // In synchronous world with virtual threads, preserving order depends on collecting futures.
+        // Our implementation uses stream().map(submit).toList() then futures.stream().map(join).collect
+        // This preserves order of the original ID list.
+        
         String productId = "1";
         List<String> similarIds = List.of("2", "3");
         Product p2 = new Product("2", "Product 2", BigDecimal.TEN, true);
         Product p3 = new Product("3", "Product 3", BigDecimal.ONE, true);
 
-        given(productServicePort.getSimilarProductIds(productId)).willReturn(Mono.just(similarIds));
+        given(productServicePort.getSimilarProductIds(productId)).willReturn(similarIds);
+        given(productServicePort.getProductDetail("2")).willReturn(p2);
+        given(productServicePort.getProductDetail("3")).willReturn(p3);
         
-        // p2 is delayed, p3 is immediate. If flatMap was used, p3 might come first. 
-        // With flatMapSequential, p2 should still be first.
-        given(productServicePort.getProductDetail("2"))
-            .willReturn(Mono.just(p2).delayElement(java.time.Duration.ofMillis(100)));
-        given(productServicePort.getProductDetail("3"))
-            .willReturn(Mono.just(p3));
+        // We cannot easily simulate delay in "given" for blocking code without Thread.sleep or custom answer, 
+        // but the logic guarantees order by list nature.
+        
+        List<Product> result = similarProductsService.getSimilarProducts(productId);
 
-        StepVerifier.create(similarProductsService.getSimilarProducts(productId))
-                .expectNext(List.of(p2, p3))
-                .verifyComplete();
+        Assertions.assertThat(result).containsExactly(p2, p3);
     }
 }

@@ -7,10 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.netty.http.client.HttpClient;
-import reactor.netty.resources.ConnectionProvider;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.client.RestClient;
 
 @Configuration
 public class ClientConfig {
@@ -18,29 +16,17 @@ public class ClientConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientConfig.class);
 
     @Bean
-    public WebClient.Builder webClientBuilder() {
-        return WebClient.builder();
-    }
-
-    @Bean
-    public ProductApi productApi(@Value("${external.product-service.base-url}") String baseUrl) {
+    public ProductApi productApi(@Value("${external.product-service.base-url}") String baseUrl,
+                               RestClient.Builder restClientBuilder) {
         LOGGER.info("Initializing ProductApi (generated) with base URL: {}", baseUrl);
 
-        ConnectionProvider provider = ConnectionProvider.builder("custom")
-            .maxConnections(500)
-            .pendingAcquireMaxCount(1000)
-            .build();
+        var requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(3000);
+        requestFactory.setReadTimeout(3000);
 
-        HttpClient httpClient = HttpClient.create(provider)
-            .compress(true)
-            .keepAlive(true);
-
-        WebClient webClient = WebClient.builder()
-            .baseUrl(baseUrl)
-            .clientConnector(new ReactorClientHttpConnector(httpClient))
-            .build();
-
-        ApiClient apiClient = new ApiClient(webClient);
+        ApiClient apiClient = new ApiClient(restClientBuilder
+                .requestFactory(requestFactory)
+                .build());
         apiClient.setBasePath(baseUrl);
         return new ProductApi(apiClient);
     }

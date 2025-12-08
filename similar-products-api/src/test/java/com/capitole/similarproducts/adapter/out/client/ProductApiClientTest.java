@@ -2,7 +2,6 @@ package com.capitole.similarproducts.adapter.out.client;
 
 import com.capitole.similarproducts.generated.api.ProductApi;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -16,8 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
 
 @ExtendWith(MockitoExtension.class)
 class ProductApiClientTest {
@@ -39,15 +36,13 @@ class ProductApiClientTest {
         // Given
         String productId = "1";
         List<String> expectedIds = List.of("2", "3", "4");
-        when(productApi.getProductSimilarids(productId)).thenReturn(Mono.just(java.util.Set.of("2", "3", "4")));
+        when(productApi.getProductSimilarids(productId)).thenReturn(new java.util.HashSet<>(expectedIds));
 
         // When
-        Mono<List<String>> result = productApiClient.getSimilarProductIds(productId);
+        List<String> result = productApiClient.getSimilarProductIds(productId);
 
         // Then
-        StepVerifier.create(result)
-                .expectNextMatches(list -> list.size() == expectedIds.size() && list.containsAll(expectedIds))
-                .verifyComplete();
+        org.assertj.core.api.Assertions.assertThat(result).hasSize(expectedIds.size()).containsAll(expectedIds);
         verify(productApi).getProductSimilarids(productId);
     }
 
@@ -63,20 +58,19 @@ class ProductApiClientTest {
         
         Product product = new Product("1", "Product 1", new BigDecimal("10.00"), true);
         
-        when(productApi.getProductProductId(productId)).thenReturn(Mono.just(detail));
+        when(productApi.getProductProductId(productId)).thenReturn(detail);
         when(productClientMapper.toDomain(detail)).thenReturn(product);
 
         // When
-        Mono<Product> result = productApiClient.getProductDetail(productId);
+        Product result = productApiClient.getProductDetail(productId);
 
         // Then
-        StepVerifier.create(result)
-                .expectNextMatches(resultingProduct -> 
-                    resultingProduct.id().equals("1") && 
-                    resultingProduct.name().equals("Product 1") && 
-                    resultingProduct.price().equals(new BigDecimal("10.00")) && 
-                    resultingProduct.availability())
-                .verifyComplete();
+        org.assertj.core.api.Assertions.assertThat(result)
+            .matches(r -> r.id().equals("1"))
+            .matches(r -> r.name().equals("Product 1"))
+            .matches(r -> r.price().equals(new BigDecimal("10.00")))
+            .matches(r -> r.availability());
+            
         verify(productApi).getProductProductId(productId);
         verify(productClientMapper).toDomain(detail);
     }

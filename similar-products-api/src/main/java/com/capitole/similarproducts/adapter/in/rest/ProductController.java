@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
 
 /**
  * REST controller for similar products endpoint.
@@ -43,10 +42,10 @@ public class ProductController {
 
     /**
      * Retrieves similar products for a given product ID.
-     * Returns list of product details with parallel non-blocking API calls.
+     * Returns list of product details.
      *
      * @param productId the product ID to find similar products for
-     * @return Mono containing list of similar products
+     * @return List of similar products
      */
     @GetMapping(value = "/{productId}/similar", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
@@ -78,16 +77,16 @@ public class ProductController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
             )
     })
-    public Mono<@NonNull ResponseEntity<@NonNull List<ProductDto>>> getSimilarProducts(
+    public ResponseEntity<@NonNull List<ProductDto>> getSimilarProducts(
             @Parameter(description = "Product ID to find similar products for", required = true)
             @PathVariable String productId) {
 
         LOGGER.info("Received request for similar products of productId: {}", productId);
 
-        return getSimilarProductsUseCase.getSimilarProducts(productId)
-                .map(productMapper::toDtoList)
-                .map(ResponseEntity::ok)
-                .doOnSuccess(response -> LOGGER.info("Successfully processed request for productId: {}", productId))
-                .doOnError(error -> LOGGER.error("Error processing request for productId: {}", productId, error));
+        List<ProductDto> products =
+            productMapper.toDtoList(getSimilarProductsUseCase.getSimilarProducts(productId));
+        
+        LOGGER.info("Successfully processed request for productId: {}", productId);
+        return ResponseEntity.ok(products);
     }
 }

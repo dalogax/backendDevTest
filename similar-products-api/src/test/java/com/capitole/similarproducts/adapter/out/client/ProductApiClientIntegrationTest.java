@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import reactor.test.StepVerifier;
 
 @SpringBootTest(properties = {
     "resilience4j.retry.instances.productService.wait-duration=50ms",
@@ -30,7 +29,6 @@ import reactor.test.StepVerifier;
     "resilience4j.circuitbreaker.instances.productService.sliding-window-size=5",
     "resilience4j.circuitbreaker.instances.productService.minimum-number-of-calls=5"
 })
-
 class ProductApiClientIntegrationTest {
 
     private static WireMockServer wireMockServer;
@@ -72,9 +70,9 @@ class ProductApiClientIntegrationTest {
                         .withBody("[\"1\", \"2\", \"3\"]")
                         .withStatus(200)));
 
-        StepVerifier.create(productApiClient.getSimilarProductIds(productId))
-                .expectNextMatches(list -> list.containsAll(List.of("1", "2", "3")))
-                .verifyComplete();
+        List<String> result = productApiClient.getSimilarProductIds(productId);
+        
+        assertThat(result).containsAll(List.of("1", "2", "3"));
     }
 
     @Test
@@ -105,9 +103,9 @@ class ProductApiClientIntegrationTest {
                         .withHeader("Content-Type", "application/json")
                         .withBody("[\"2\", \"3\", \"4\"]"))); // 4th attempt: 200
 
-        StepVerifier.create(productApiClient.getSimilarProductIds(productId))
-                .expectNextMatches(list -> list.containsAll(List.of("2", "3", "4")))
-                .verifyComplete();
+        List<String> result = productApiClient.getSimilarProductIds(productId);
+        
+        assertThat(result).containsAll(List.of("2", "3", "4"));
 
         wireMockServer.verify(4, getRequestedFor(urlEqualTo("/product/" + productId + "/similarids")));
     }
@@ -124,9 +122,8 @@ class ProductApiClientIntegrationTest {
         // When - Execute enough calls to trigger CB (Sliding window size is 10, failure rate 50%)
         // We need to generate failures. The fallback handles the error, but CB records it.
         for (int i = 0; i < 15; i++) {
-             StepVerifier.create(productApiClient.getSimilarProductIds(productId))
-                .expectError(ExternalServiceException.class)
-                .verify();
+             assertThatThrownBy(() -> productApiClient.getSimilarProductIds(productId))
+                .isInstanceOf(ExternalServiceException.class);
         }
 
         // Then verify CircuitBreaker is OPEN
@@ -136,9 +133,8 @@ class ProductApiClientIntegrationTest {
         wireMockServer.resetRequests();
         
         // Verify fail-fast behavior: Request should be short-circuited (no new call to WireMock)
-        StepVerifier.create(productApiClient.getSimilarProductIds(productId))
-                .expectError(ExternalServiceException.class)
-                .verify();
+        assertThatThrownBy(() -> productApiClient.getSimilarProductIds(productId))
+            .isInstanceOf(ExternalServiceException.class);
         
         // Verify no additional call made to WireMock
         wireMockServer.verify(0, getRequestedFor(urlEqualTo("/product/" + productId + "/similarids")));
@@ -170,9 +166,9 @@ class ProductApiClientIntegrationTest {
                         .withHeader("Content-Type", "application/json")
                         .withBody("[\"100\", \"101\"]")));
 
-        StepVerifier.create(productApiClient.getSimilarProductIds(productId))
-                .expectNextMatches(list -> list.containsAll(List.of("100", "101")))
-                .verifyComplete();
+        List<String> result = productApiClient.getSimilarProductIds(productId);
+        
+        assertThat(result).containsAll(List.of("100", "101"));
 
         // Verify it retried 3 times (initial + 2 retries)
         wireMockServer.verify(3, getRequestedFor(urlEqualTo("/product/" + productId + "/similarids")));
@@ -197,9 +193,9 @@ class ProductApiClientIntegrationTest {
                         .withHeader("Content-Type", "application/json")
                         .withBody("[\"200\"]")));
 
-        StepVerifier.create(productApiClient.getSimilarProductIds(productId))
-                .expectNextMatches(list -> list.contains("200"))
-                .verifyComplete();
+        List<String> result = productApiClient.getSimilarProductIds(productId);
+        
+        assertThat(result).contains("200");
 
         wireMockServer.verify(2, getRequestedFor(urlEqualTo("/product/" + productId + "/similarids")));
     }
