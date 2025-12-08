@@ -1,5 +1,7 @@
 package com.capitole.similarproducts.adapter.out.client;
 
+import com.capitole.similarproducts.generated.api.ProductApi;
+
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,7 +23,7 @@ import reactor.test.StepVerifier;
 class ProductApiClientTest {
 
     @Mock
-    private ProductHttpApi productHttpApi;
+    private ProductApi productApi;
     @Mock
     private ProductClientMapper productClientMapper;
 
@@ -29,7 +31,7 @@ class ProductApiClientTest {
 
     @BeforeEach
     void setUp() {
-        productApiClient = new ProductApiClient(productHttpApi, productClientMapper);
+        productApiClient = new ProductApiClient(productApi, productClientMapper);
     }
 
     @Test
@@ -37,16 +39,16 @@ class ProductApiClientTest {
         // Given
         String productId = "1";
         List<String> expectedIds = List.of("2", "3", "4");
-        when(productHttpApi.getSimilarProductIds(productId)).thenReturn(Mono.just(expectedIds));
+        when(productApi.getProductSimilarids(productId)).thenReturn(Mono.just(java.util.Set.of("2", "3", "4")));
 
         // When
         Mono<List<String>> result = productApiClient.getSimilarProductIds(productId);
 
         // Then
         StepVerifier.create(result)
-                .expectNext(expectedIds)
+                .expectNextMatches(list -> list.size() == expectedIds.size() && list.containsAll(expectedIds))
                 .verifyComplete();
-        verify(productHttpApi).getSimilarProductIds(productId);
+        verify(productApi).getProductSimilarids(productId);
     }
 
     @Test
@@ -61,7 +63,7 @@ class ProductApiClientTest {
         
         Product product = new Product("1", "Product 1", new BigDecimal("10.00"), true);
         
-        when(productHttpApi.getProductDetail(productId)).thenReturn(Mono.just(detail));
+        when(productApi.getProductProductId(productId)).thenReturn(Mono.just(detail));
         when(productClientMapper.toDomain(detail)).thenReturn(product);
 
         // When
@@ -75,7 +77,7 @@ class ProductApiClientTest {
                     resultingProduct.price().equals(new BigDecimal("10.00")) && 
                     resultingProduct.availability())
                 .verifyComplete();
-        verify(productHttpApi).getProductDetail(productId);
+        verify(productApi).getProductProductId(productId);
         verify(productClientMapper).toDomain(detail);
     }
 }

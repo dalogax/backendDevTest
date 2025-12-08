@@ -14,6 +14,8 @@ paths:
         required: true
     get:
       operationId: get-product-similarids
+      tags:
+        - Product
       summary: Gets the ids of the similar products
       description: Returns the similar products to a given one ordered by similarity
       responses:
@@ -32,6 +34,8 @@ paths:
         required: true
     get:
       operationId: get-product-productId
+      tags:
+        - Product
       summary: Gets a product detail
       description: Returns the product detail for a given productId
       responses:

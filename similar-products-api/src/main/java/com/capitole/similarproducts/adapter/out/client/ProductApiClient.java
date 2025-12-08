@@ -1,5 +1,7 @@
 package com.capitole.similarproducts.adapter.out.client;
 
+import com.capitole.similarproducts.generated.api.ProductApi;
+
 import com.capitole.similarproducts.adapter.out.client.mapper.ProductClientMapper;
 import com.capitole.similarproducts.domain.exception.ExternalServiceException;
 import com.capitole.similarproducts.domain.model.Product;
@@ -28,11 +30,11 @@ public class ProductApiClient implements ProductServicePort {
     private static final String CIRCUIT_BREAKER_NAME = "productService";
     private static final String RETRY_NAME = "productService";
 
-    private final ProductHttpApi productHttpApi;
+    private final ProductApi productApi;
     private final ProductClientMapper productClientMapper;
 
-    public ProductApiClient(ProductHttpApi productHttpApi, ProductClientMapper productClientMapper) {
-        this.productHttpApi = productHttpApi;
+    public ProductApiClient(ProductApi productApi, ProductClientMapper productClientMapper) {
+        this.productApi = productApi;
         this.productClientMapper = productClientMapper;
         LOGGER.info("ProductApiClient initialized with OpenAPI-generated models");
     }
@@ -51,7 +53,8 @@ public class ProductApiClient implements ProductServicePort {
     public Mono<@NonNull List<String>> getSimilarProductIds(String productId) {
         LOGGER.debug("Fetching similar product IDs for productId: {}", productId);
 
-        return productHttpApi.getSimilarProductIds(productId)
+        return productApi.getProductSimilarids(productId)
+                .map(ids -> (List<String>) new java.util.ArrayList<>(ids))
                 .doOnSuccess(ids -> LOGGER.debug("Retrieved {} similar product IDs for productId: {}",
                     ids.size(), productId))
                 .doOnError(WebClientResponseException.NotFound.class,
@@ -74,7 +77,7 @@ public class ProductApiClient implements ProductServicePort {
     public Mono<Product> getProductDetail(String productId) {
         LOGGER.debug("Fetching product detail for productId: {}", productId);
 
-        return productHttpApi.getProductDetail(productId)
+        return productApi.getProductProductId(productId)
                 .map(productClientMapper::toDomain)
                 .doOnSuccess(product -> LOGGER.debug("Retrieved product detail for productId: {}", productId))
                 .doOnError(WebClientResponseException.NotFound.class,

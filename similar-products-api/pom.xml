@@ -134,18 +134,18 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/openapi/existingApis.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/openapi/product-openapi.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>webclient</library>
                             <apiPackage>com.capitole.similarproducts.generated.api</apiPackage>
                             <modelPackage>com.capitole.similarproducts.generated.model</modelPackage>
                             <invokerPackage>com.capitole.similarproducts.generated.invoker</invokerPackage>
-                            <generateApis>false</generateApis>
+                            <generateApis>true</generateApis>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <generateApiDocumentation>false</generateApiDocumentation>
                             <generateModelDocumentation>false</generateModelDocumentation>
-                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <generateSupportingFiles>true</generateSupportingFiles>
                             <configOptions>
                                 <useJakartaEe>true</useJakartaEe>
                                 <dateLibrary>java8</dateLibrary>
