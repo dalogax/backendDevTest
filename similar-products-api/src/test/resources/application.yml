@@ -1,0 +1,3 @@
+external:
+  product-service:
+    base-url: http://localhost:8080
