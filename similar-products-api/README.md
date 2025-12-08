@@ -6,16 +6,17 @@ The **Similar Products API** is a RESTful service designed to provide product de
 ## Tech Stack
 - **Java 21**: Core programming language.
 - **Spring Boot 3.5.8**: Application framework.
-- **Spring WebFlux**: Reactive web stack for non-blocking I/O.
-- **Resilience4j**: Fault tolerance library (Circuit Breaker, Retry, etc.).
+- **Spring Web MVC**: Standard web stack (Blocking I/O).
+- **Virtual Threads**: Lightweight threads for high-throughput concurrency (Project Loom).
+- **Resilience4j**: Fault tolerance library (Circuit Breaker, Retry, Bulkhead).
 - **Caffeine**: In-memory caching.
 - **MapStruct**: Java bean mapping.
 - **SpringDoc OpenAPI**: API documentation.
 - **Maven**: Build tool.
 
 ## Key Features
-- **Reactive Architecture**: Built on top of Project Reactor for high throughput and scalability.
-- **Resilience**: Implements circuit breakers and retry mechanisms to handle external service failures gracefully.
+- **Virtual Threads**: Leverages Java 21 Virtual Threads for high throughput and scalability handling blocking I/O efficiently.
+- **Resilience**: Implements circuit breakers, retries, and bulkheads to handle external service failures gracefully.
 - **Caching**: Caches results to reduce load on downstream services and improve response times.
 - **API Documentation**: Automatically generated OpenAPI documentation.
 
