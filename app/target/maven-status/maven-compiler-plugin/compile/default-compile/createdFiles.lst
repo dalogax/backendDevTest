@@ -1,0 +1,5 @@
+com/similarproducts/model/ProductDetail.class
+com/similarproducts/controller/SimilarProductsController.class
+com/similarproducts/service/ExternalApiService.class
+com/similarproducts/service/SimilarProductsService.class
+com/similarproducts/Application.class

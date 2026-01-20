@@ -1,0 +1,15 @@
+{
+  "java.compile.nullAnalysis.mode": "automatic",
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-21",
+      "path": "/Users/javikuka/.jdk/jdk-21.0.8(1)/jdk-21.0.8+9/Contents/Home",
+      "default": true
+    }
+  ],
+  "java.jdt.ls.java.home": "/Users/javikuka/.jdk/jdk-21.0.8(1)/jdk-21.0.8+9/Contents/Home",
+  "java.server.launchMode": "Standard",
+  "[java]": {
+    "editor.defaultFormatter": "redhat.java"
+  }
+}
