@@ -63,11 +63,13 @@ for (String id : similarIds) {
 ✅ **Timeout HTTP:** Connect 5s + Read 10s  
 ✅ **Never crashes:** Nunca retorna 500 Error  
 ✅ **Validación input:** productId no vacío  
+✅ **Logging:** Todos los errores se registran en logs para debugging  
 
 **Ejemplo:**
 - Productos: 5
 - Uno tarda 20 seg (timeout 15s)
 - Retorna: 4 productos (no falla)
+- Log: WARN/ERROR en logs con detalles para debugging
 
 ---
 

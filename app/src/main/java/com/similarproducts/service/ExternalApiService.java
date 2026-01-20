@@ -1,6 +1,8 @@
 package com.similarproducts.service;
 
 import com.similarproducts.model.ProductDetail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class ExternalApiService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ExternalApiService.class);
 
     private final RestTemplate restTemplate;
     private final String mockBaseUrl;
@@ -29,7 +33,7 @@ public class ExternalApiService {
             String[] ids = restTemplate.getForObject(url, String[].class);
             return ids != null ? ids : new String[0];
         } catch (Exception e) {
-            // TODO: check
+            logger.warn("Failed to fetch similar product IDs for productId: {}. Error: {}", productId, e.getMessage());
             return new String[0];
         }
     }
@@ -40,6 +44,7 @@ public class ExternalApiService {
             ProductDetail detail = restTemplate.getForObject(url, ProductDetail.class);
             return detail;
         } catch (Exception e) {
+            logger.warn("Failed to fetch product details for productId: {}. Error: {}", productId, e.getMessage());
             return null;
         }
     }

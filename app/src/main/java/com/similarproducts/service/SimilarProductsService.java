@@ -1,6 +1,8 @@
 package com.similarproducts.service;
 
 import com.similarproducts.model.ProductDetail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -9,6 +11,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class SimilarProductsService {
+
+    private static final Logger logger = LoggerFactory.getLogger(SimilarProductsService.class);
 
     private final ExternalApiService externalApiService;
     private final ExecutorService executorService;
@@ -43,6 +47,8 @@ public class SimilarProductsService {
                         try {
                             return f.get(PRODUCT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
                         } catch (TimeoutException | InterruptedException | ExecutionException e) {
+                            logger.warn("Failed to fetch product details within timeout ({}s). Error: {}",
+                                    PRODUCT_TIMEOUT_SECONDS, e.getMessage());
                             return null;
                         }
                     })
@@ -52,6 +58,8 @@ public class SimilarProductsService {
             return similarProducts;
 
         } catch (Exception e) {
+            logger.error("Unexpected error in getSimilarProducts for productId: {}. Error: {}", productId,
+                    e.getMessage(), e);
             return new ArrayList<>();
         }
     }
