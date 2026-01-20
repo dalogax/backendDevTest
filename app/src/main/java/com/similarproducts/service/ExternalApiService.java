@@ -14,6 +14,9 @@ public class ExternalApiService {
     private final RestTemplate restTemplate;
     private final String mockBaseUrl;
 
+    private static final int CONNECT_TIMEOUT_SECONDS = 5;
+    private static final int READ_TIMEOUT_SECONDS = 10;
+
     public ExternalApiService(
             @Value("${external.api.mock.url:http://localhost:3001}") String mockBaseUrl) {
         this.mockBaseUrl = mockBaseUrl;
@@ -26,6 +29,7 @@ public class ExternalApiService {
             String[] ids = restTemplate.getForObject(url, String[].class);
             return ids != null ? ids : new String[0];
         } catch (Exception e) {
+            // TODO: check
             return new String[0];
         }
     }
@@ -42,8 +46,8 @@ public class ExternalApiService {
 
     private RestTemplate createRestTemplate() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(5));
-        factory.setReadTimeout((int) TimeUnit.SECONDS.toMillis(10));
+        factory.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(CONNECT_TIMEOUT_SECONDS));
+        factory.setReadTimeout((int) TimeUnit.SECONDS.toMillis(READ_TIMEOUT_SECONDS));
         return new RestTemplate(factory);
     }
 }
