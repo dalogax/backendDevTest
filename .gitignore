@@ -1,0 +1,28 @@
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Java/Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+.classpath
+.project
+.settings/
+
+# Build
+.DS_Store
+*.log
+
+# Local environment
+.java-version
+.env
+.env.local
+
+# Test/validation scripts
+VALIDAR_PRUEBA.sh
