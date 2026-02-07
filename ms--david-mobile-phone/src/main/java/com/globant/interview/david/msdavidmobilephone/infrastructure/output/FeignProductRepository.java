@@ -4,7 +4,6 @@ import com.globant.interview.david.msdavidmobilephone.domain.model.Product;
 import com.globant.interview.david.msdavidmobilephone.domain.repository.ProductRepository;
 import com.globant.interview.david.msdavidmobilephone.infrastructure.output.client.FeignProductClient;
 import com.globant.interview.david.msdavidmobilephone.infrastructure.output.client.dto.ProductDetailResponse;
-import com.globant.interview.david.msdavidmobilephone.infrastructure.output.client.dto.SimilarIdsResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -22,8 +21,8 @@ public class FeignProductRepository implements ProductRepository {
     @Override
     public List<String> getSimilarProductIds(String productId) {
         log.info("Fetching similar product ids for productId: {}", productId);
-        SimilarIdsResponse response = feignProductClient.getSimilarIds(productId);
-        return response.ids();
+        List<String> ids = feignProductClient.getSimilarIds(productId);
+        return ids != null ? ids : List.of();
     }
 
     @Override
