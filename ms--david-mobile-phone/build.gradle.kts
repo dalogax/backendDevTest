@@ -1,6 +1,6 @@
 plugins {
 	java
-	id("org.springframework.boot") version "4.1.0-M1"
+	id("org.springframework.boot") version "3.4.2"
 	id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -26,22 +26,17 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-cache")
-	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
-	implementation("org.springframework.boot:spring-boot-starter-webmvc")
+	implementation("org.springframework.boot:spring-boot-starter-web")
 	// OpenFeign para llamadas declarativas a APIs externas
-	implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.0")
+	implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.2.0")
 	// Circuit Breaker para resiliencia
-	implementation("io.github.resilience4j:resilience4j-spring-boot2:2.2.0")
+	implementation("io.github.resilience4j:resilience4j-spring-boot3:2.2.0")
 	implementation("io.github.resilience4j:resilience4j-feign:2.2.0")
 	// Caffeine cache implementation
 	implementation("com.github.ben-manes.caffeine:caffeine")
 	compileOnly("org.projectlombok:lombok")
-	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.projectlombok:lombok")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-cache-test")
-	testImplementation("org.springframework.boot:spring-boot-starter-data-jdbc-test")
-	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
