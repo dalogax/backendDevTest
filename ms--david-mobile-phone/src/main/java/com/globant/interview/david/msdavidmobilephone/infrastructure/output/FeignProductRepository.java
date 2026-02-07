@@ -2,7 +2,7 @@ package com.globant.interview.david.msdavidmobilephone.infrastructure.output;
 
 import com.globant.interview.david.msdavidmobilephone.domain.model.Product;
 import com.globant.interview.david.msdavidmobilephone.domain.repository.ProductRepository;
-import com.globant.interview.david.msdavidmobilephone.infrastructure.output.client.ExternalProductClient;
+import com.globant.interview.david.msdavidmobilephone.infrastructure.output.client.FeignProductClient;
 import com.globant.interview.david.msdavidmobilephone.infrastructure.output.client.dto.ProductDetailResponse;
 import com.globant.interview.david.msdavidmobilephone.infrastructure.output.client.dto.SimilarIdsResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +15,14 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class ProductRepositoryImpl implements ProductRepository {
+public class FeignProductRepository implements ProductRepository {
 
-    private final ExternalProductClient externalProductClient;
+    private final FeignProductClient feignProductClient;
 
     @Override
     public List<String> getSimilarProductIds(String productId) {
         log.info("Fetching similar product ids for productId: {}", productId);
-        SimilarIdsResponse response = externalProductClient.getSimilarIds(productId);
+        SimilarIdsResponse response = feignProductClient.getSimilarIds(productId);
         return response.ids();
     }
 
@@ -30,7 +30,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     public Optional<Product> getProductDetail(String productId) {
         log.info("Fetching product detail for productId: {}", productId);
         try {
-            ProductDetailResponse response = externalProductClient.getProductDetail(productId);
+            ProductDetailResponse response = feignProductClient.getProductDetail(productId);
             Product product = new Product(
                 response.id(),
                 response.name(),

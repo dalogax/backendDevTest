@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(name = "externalProductApi", url = "${external.api.base-url:http://localhost:3001}")
-public interface ExternalProductClient {
+public interface FeignProductClient {
 
     @GetMapping("/product/{productId}/similarids")
     SimilarIdsResponse getSimilarIds(@PathVariable("productId") String productId);
