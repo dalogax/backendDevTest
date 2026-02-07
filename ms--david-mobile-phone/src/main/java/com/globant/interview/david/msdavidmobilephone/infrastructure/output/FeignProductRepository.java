@@ -6,6 +6,7 @@ import com.globant.interview.david.msdavidmobilephone.infrastructure.output.clie
 import com.globant.interview.david.msdavidmobilephone.infrastructure.output.client.dto.ProductDetailResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
+@ConditionalOnProperty(name = "product.repository.impl", havingValue = "feign", matchIfMissing = true)
 public class FeignProductRepository implements ProductRepository {
 
     private final FeignProductClient feignProductClient;

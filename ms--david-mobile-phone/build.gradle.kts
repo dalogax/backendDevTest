@@ -27,6 +27,8 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-cache")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	// WebFlux para llamadas reactivas a APIs externas
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	// OpenFeign para llamadas declarativas a APIs externas
 	implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.2.0")
 	// Circuit Breaker para resiliencia
