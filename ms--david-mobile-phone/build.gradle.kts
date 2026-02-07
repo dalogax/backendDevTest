@@ -28,6 +28,13 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-cache")
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
+	// OpenFeign para llamadas declarativas a APIs externas
+	implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.0")
+	// Circuit Breaker para resiliencia
+	implementation("io.github.resilience4j:resilience4j-spring-boot2:2.2.0")
+	implementation("io.github.resilience4j:resilience4j-feign:2.2.0")
+	// Caffeine cache implementation
+	implementation("com.github.ben-manes.caffeine:caffeine")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.projectlombok:lombok")
