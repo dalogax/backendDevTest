@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: products
+server:
+  port: 5000
+  tomcat:
+    threads:
+      max: 200
+    accept-count: 200
+
+external:
+  products-api:
+    base-url: http://localhost:3001
+    timeouts:
+      connect-ms: 300
