@@ -14,6 +14,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(GlobalException.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(GlobalException ex) {
+
+        log.warn("Handled GlobalException - status: {}, message: {}",
+                ex.getHttpStatus(), ex.getMessage());
+
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
 
         return ResponseEntity.status(ex.getHttpStatus()).body(errorResponse);
@@ -21,9 +25,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception ex) {
-        ErrorResponse errorResponse = new ErrorResponse("Unexpected error");
 
-        log.error("Se ha producido un error: ", ex);
+        log.error("Unexpected error occurred", ex);
+
+        ErrorResponse errorResponse = new ErrorResponse("Unexpected error");
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
