@@ -20,7 +20,7 @@ public class ProductService implements GetSimilarProductsUseCase {
     public List<Product> getSimilarProducts(String productId) {
         return productPort
                 .getSimilarProductIds(productId)
-                .stream()
+                .parallelStream()
                 .map(productPort::getProductDetail)
                 .toList();
     }
