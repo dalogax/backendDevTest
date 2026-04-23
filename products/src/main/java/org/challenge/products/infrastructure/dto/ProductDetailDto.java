@@ -1,7 +1,7 @@
 package org.challenge.products.infrastructure.dto;
 
 public record ProductDetailDto (
-        String productId,
+        String id,
         String name,
         Double price,
         Boolean availability

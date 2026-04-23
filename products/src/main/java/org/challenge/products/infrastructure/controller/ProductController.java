@@ -2,7 +2,7 @@ package org.challenge.products.infrastructure.controller;
 
 import org.challenge.products.application.port.in.GetSimilarProductsUseCase;
 import org.challenge.products.infrastructure.dto.ProductResponseDto;
-import org.challenge.products.mapper.ProductMapper;
+import org.challenge.products.infrastructure.mapper.ProductMapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
