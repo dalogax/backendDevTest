@@ -9,6 +9,7 @@ import org.challenge.products.infrastructure.mapper.ProductMapper;
 import org.challenge.products.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
@@ -32,6 +33,7 @@ public class ProductClient implements ProductPort {
     }
 
     @Override
+    @Cacheable(value = "similarIds", key = "#productId")
     public List<String> getSimilarProductIds(String productId) {
         log.debug("Fetching similar product ids for productId: {}", productId);
         String[] ids = productRestClient.get()
@@ -59,6 +61,7 @@ public class ProductClient implements ProductPort {
     }
 
     @Override
+    @Cacheable(value = "productDetail", key = "#productId")
     public Product getProduct(String productId) {
         log.debug("Fetching product details for productId: {}", productId);
 
