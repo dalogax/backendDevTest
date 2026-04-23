@@ -3,25 +3,21 @@ package org.challenge.products.infrastructure.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.JdkClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
-
-import java.net.http.HttpClient;
-import java.time.Duration;
 
 @Configuration
 public class RestClientConfig {
 
     @Bean
     public RestClient productRestClient(
-            @Value("${integrations.product-client.base-url}") String productClientBaseUrl) {
+            @Value("${integrations.productClient.baseUrl}") String productClientBaseUrl,
+            @Value("${integrations.productClient.connectTimeout}") int connectTimeout,
+            @Value("${integrations.productClient.readTimeout}") int readTimeout) {
 
-        HttpClient httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(2))
-                .build();
-
-        JdkClientHttpRequestFactory factory = new JdkClientHttpRequestFactory(httpClient);
-        factory.setReadTimeout(Duration.ofSeconds(3));
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(connectTimeout);
+        factory.setReadTimeout(readTimeout);
 
         return RestClient.builder()
                 .baseUrl(productClientBaseUrl)

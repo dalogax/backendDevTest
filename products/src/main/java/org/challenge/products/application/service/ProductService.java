@@ -5,6 +5,7 @@ import org.challenge.products.application.port.out.ProductPort;
 import org.challenge.products.domain.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class ProductService implements GetSimilarProductsUseCase {
     }
 
     @Override
+    @Cacheable(value = "similarProducts", key = "#productId")
     public List<Product> getSimilarProducts(String productId) {
         log.debug("Fetching similar products for productId: {}", productId);
 
@@ -36,12 +38,7 @@ public class ProductService implements GetSimilarProductsUseCase {
     }
 
     private Optional<Product> getProduct(String productId) {
-        try {
-            return Optional.of(productPort.getProduct(productId));
-        } catch (Exception e) {
-            log.warn("Error fetching product details for id: {} - error: {}", productId, e.getMessage());
-            return Optional.empty();
-        }
+        return Optional.ofNullable(productPort.getProduct(productId));
     }
 
 }

@@ -1,5 +1,6 @@
 package org.challenge.products.infrastructure.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,10 +18,11 @@ import java.time.Duration;
 public class RedisConfig {
 
     @Bean
-    public RedisCacheManager cacheManager(RedisConnectionFactory factory) {
+    public RedisCacheManager cacheManager(RedisConnectionFactory factory,
+                                          @Value("${cache.ttl.millis}") long timeToLive,
+                                          @Value("${cache.similarProducts.name}") String similarProductsCacheName) {
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(5))
-                .disableCachingNullValues()
+                .entryTtl(Duration.ofMillis(timeToLive))
                 .serializeKeysWith(
                         RedisSerializationContext.SerializationPair
                                 .fromSerializer(new StringRedisSerializer()))
@@ -30,10 +32,7 @@ public class RedisConfig {
 
         return RedisCacheManager.builder(factory)
                 .cacheDefaults(defaultConfig)
-                .withCacheConfiguration("similarIds",
-                        defaultConfig.entryTtl(Duration.ofMinutes(10)))
-                .withCacheConfiguration("productDetail",
-                        defaultConfig.entryTtl(Duration.ofMinutes(5)))
+                .withCacheConfiguration(similarProductsCacheName, defaultConfig)
                 .build();
     }
 }
