@@ -33,3 +33,18 @@ services:
       - K6_OUT=influxdb=http://influxdb:8086/k6
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  products-redis:
+    image: 'redis:latest'
+    ports:
+      - "6379:6379"
+  products:
+    environment:
+      - SPRING_DATA_REDIS_HOST=products-redis
+      - SPRING_DATA_REDIS_PORT=6379
+      - SERVER_PORT=5000
+      - EXTERNAL_API_HOST=simulado
+    build: ./products
+    ports:
+      - "5000:5000"
+    depends_on:
+      - products-redis
