@@ -2,6 +2,7 @@ package org.challenge.products.infrastructure.controller;
 
 import org.challenge.products.application.exception.ExternalServiceException;
 import org.challenge.products.domain.exception.ProductNotFoundException;
+import org.challenge.products.infrastructure.dto.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,14 +14,14 @@ import java.time.LocalDateTime;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(ProductNotFoundException e) {
+    public ResponseEntity<ErrorResponseDto> handleNotFound(ProductNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponse(e.getMessage(), LocalDateTime.now()));
+                .body(new ErrorResponseDto(e.getMessage(), LocalDateTime.now()));
     }
 
     @ExceptionHandler(ExternalServiceException.class)
-    public ResponseEntity<ErrorResponse> handleServiceError(ExternalServiceException e) {
+    public ResponseEntity<ErrorResponseDto> handleServiceError(ExternalServiceException e) {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-                .body(new ErrorResponse(e.getMessage(), LocalDateTime.now()));
+                .body(new ErrorResponseDto(e.getMessage(), LocalDateTime.now()));
     }
 }
