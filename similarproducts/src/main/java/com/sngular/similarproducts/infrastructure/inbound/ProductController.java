@@ -30,7 +30,7 @@ public class ProductController {
 
     @GetMapping("/{productId}/similar")
     public Set<ProductDetail> getProductSimilar(@PathVariable String productId) {
-        log.info("GET /product/{}/similar", productId);
+        log.debug("GET /product/{}/similar", productId);
 
         return productsService.getSimilarProducts(productId);
     }

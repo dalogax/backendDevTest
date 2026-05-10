@@ -1,0 +1,9 @@
+{
+    "properties": [
+        {
+            "name": "app.product-service.base-url",
+            "type": "java.lang.String",
+            "description": "Base URL of the product service to fetch product details and similar products."
+        }
+    ]
+}
