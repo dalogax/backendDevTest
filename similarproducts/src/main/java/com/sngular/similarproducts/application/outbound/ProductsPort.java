@@ -1,6 +1,6 @@
 package com.sngular.similarproducts.application.outbound;
 
-import java.util.Set;
+import java.util.Collection;
 
 import com.sngular.similarproducts.domain.ProductDetail;
 
@@ -9,7 +9,7 @@ import com.sngular.similarproducts.domain.ProductDetail;
  */
 public interface ProductsPort {
 
-    Set<String> getSimilarProductIds(String productId);
+    Collection<String> getSimilarProductIds(String productId);
 
     ProductDetail getProduct(String productId);
 }

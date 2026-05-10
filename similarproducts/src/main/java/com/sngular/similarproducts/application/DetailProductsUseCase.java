@@ -1,7 +1,6 @@
 package com.sngular.similarproducts.application;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
@@ -35,12 +34,13 @@ public class DetailProductsUseCase {
      * @param productId the ID of the product for which to find similar products
      * @return ProductDetail objects representing the similar products
      */
-    public Set<ProductDetail> getSimilarProducts(@NotBlank @Size(min = 1) String productId) {
+    public List<ProductDetail> getSimilarProducts(@NotBlank @Size(min = 1) String productId) {
         log.debug("Fetching similar IDs for productId {}", productId);
 
-        Set<ProductDetail> similarProducts = productsPort.getSimilarProductIds(productId).stream()
+        List<ProductDetail> similarProducts = productsPort.getSimilarProductIds(productId).stream()
                 .flatMap(this::getProductDetail)
-                .collect(Collectors.toSet());
+                .distinct()
+                .toList();
 
         if (similarProducts.isEmpty()) {
             log.info("No similar products found for productId {}", productId);

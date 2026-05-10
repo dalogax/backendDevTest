@@ -1,8 +1,7 @@
 package com.sngular.similarproducts.infrastructure.outbound;
 
-import java.util.LinkedHashSet;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -33,7 +32,7 @@ public class ProductsClientAdapter implements ProductsPort {
     }
 
     @Override
-    public Set<String> getSimilarProductIds(String productId) {
+    public Collection<String> getSimilarProductIds(String productId) {
         log.debug("Calling GET /product/{}/similarids", productId);
         try {
             List<String> ids = restClient.get()
@@ -41,7 +40,7 @@ public class ProductsClientAdapter implements ProductsPort {
                     .retrieve()
                     .body(STRING_LIST_TYPE);
 
-            return ids == null ? Set.of() : new LinkedHashSet<>(ids);
+            return ids == null ? List.of() : ids;
         } catch (HttpClientErrorException.NotFound ex) {
             log.warn("Similar IDs not found for productId {}", productId, ex);
             throw new SimilarProductsNotFoundException(productId, ex);

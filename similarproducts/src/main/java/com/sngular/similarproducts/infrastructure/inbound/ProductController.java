@@ -1,6 +1,6 @@
 package com.sngular.similarproducts.infrastructure.inbound;
 
-import java.util.Set;
+import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +29,7 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}/similar")
-    public Set<ProductDetail> getProductSimilar(@PathVariable String productId) {
+    public List<ProductDetail> getProductSimilar(@PathVariable String productId) {
         log.debug("GET /product/{}/similar", productId);
 
         return productsService.getSimilarProducts(productId);

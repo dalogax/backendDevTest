@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterAll;
@@ -61,7 +62,7 @@ class DetailProductsUseCaseTest {
         when(productsPort.getProduct("2")).thenReturn(new ProductDetail("2", "BMW i3", 50000D, true));
         when(productsPort.getProduct("3")).thenReturn(new ProductDetail("3", "Byd Seal", 43000D, false));
 
-        Set<ProductDetail> result = detailProductsUseCase.getSimilarProducts(productId);
+        List<ProductDetail> result = detailProductsUseCase.getSimilarProducts(productId);
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -111,7 +112,7 @@ class DetailProductsUseCaseTest {
         when(productsPort.getProduct("2")).thenThrow(new RuntimeException("Product API failed"));
         when(productsPort.getProduct("3")).thenReturn(new ProductDetail("3", "Byd Seal", 43000D, false));
 
-        Set<ProductDetail> result = detailProductsUseCase.getSimilarProducts(productId);
+        List<ProductDetail> result = detailProductsUseCase.getSimilarProducts(productId);
 
         assertEquals(1, result.size());
         assertEquals("3", result.stream().findFirst().orElseThrow().id());
@@ -126,7 +127,7 @@ class DetailProductsUseCaseTest {
         when(productsPort.getProduct("2")).thenThrow(new ProductNotFoundException("2"));
         when(productsPort.getProduct("3")).thenReturn(new ProductDetail("3", "Byd Seal", 43000D, false));
 
-        Set<ProductDetail> result = detailProductsUseCase.getSimilarProducts(productId);
+        List<ProductDetail> result = detailProductsUseCase.getSimilarProducts(productId);
 
         assertEquals(1, result.size());
         assertEquals("3", result.stream().filter(p -> p.id().equals("3")).findFirst().orElseThrow().id());
@@ -153,7 +154,7 @@ class DetailProductsUseCaseTest {
         when(productsPort.getProduct("20")).thenReturn(new ProductDetail("20", "P20", 20.0, true));
         when(productsPort.getProduct("30")).thenReturn(new ProductDetail("30", "P30", 30.0, false));
 
-        Set<ProductDetail> result = detailProductsUseCase.getSimilarProducts(productId);
+        List<ProductDetail> result = detailProductsUseCase.getSimilarProducts(productId);
 
         assertEquals(3, result.size());
         verify(productsPort).getSimilarProductIds(productId);
