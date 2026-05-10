@@ -1,0 +1,54 @@
+openapi: 3.0.0
+info:
+  title: SimilarProducts
+  version: '1.0'
+servers:
+  - url: 'http://localhost:5000'
+paths:
+  '/product/{productId}/similar':
+    parameters:
+      - schema:
+          type: string
+        name: productId
+        in: path
+        required: true
+    get:
+      operationId: get-product-similar
+      summary: Similar products
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/SimilarProducts'
+        '404':
+          description: Product Not found
+components:
+  schemas:
+    SimilarProducts:
+      type: array
+      description: 'List of similar products to a given one ordered by similarity'
+      minItems: 0
+      uniqueItems: true
+      items:
+        $ref: '#/components/schemas/ProductDetail'
+    ProductDetail:
+      description: 'Product detail'
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+        name:
+          type: string
+          minLength: 1
+        price:
+          type: number
+        availability:
+          type: boolean
+      required:
+        - id
+        - name
+        - price
+        - availability
