@@ -1,7 +1,10 @@
 package com.sngular.similarproducts.application;
 
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -30,17 +33,35 @@ public class DetailProductsUseCase {
 
     /**
      * Get details of similar products for a given product ID.
-     * 
+     * Each product detail is fetched concurrently using virtual threads.
+     *
      * @param productId the ID of the product for which to find similar products
      * @return ProductDetail objects representing the similar products
      */
     public List<ProductDetail> getSimilarProducts(@NotBlank @Size(min = 1) String productId) {
         log.debug("Fetching similar IDs for productId {}", productId);
 
-        List<ProductDetail> similarProducts = productsPort.getSimilarProductIds(productId).stream()
-                .flatMap(this::getProductDetail)
-                .distinct()
-                .toList();
+        var similarIds = productsPort.getSimilarProductIds(productId);
+
+        List<ProductDetail> similarProducts;
+        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            List<CompletableFuture<ProductDetail>> futures = similarIds.stream()
+                    .map(id -> CompletableFuture.supplyAsync(() -> {
+                        try {
+                            return productsPort.getProduct(id);
+                        } catch (Exception ex) {
+                            log.warn("Failed to fetch product detail for id {}, skipping", id, ex);
+                            return null;
+                        }
+                    }, executor))
+                    .toList();
+
+            similarProducts = futures.stream()
+                    .map(CompletableFuture::join)
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .toList();
+        }
 
         if (similarProducts.isEmpty()) {
             log.info("No similar products found for productId {}", productId);
@@ -49,19 +70,6 @@ public class DetailProductsUseCase {
 
         log.info("Found {} similar products for productId {}", similarProducts.size(), productId);
         return similarProducts;
-    }
-
-    /**
-     * Fetch product details for a given product ID, returning an empty stream if
-     * the product is not found or an error occurs.
-     */
-    private Stream<ProductDetail> getProductDetail(String productId) {
-        try {
-            return Stream.of(productsPort.getProduct(productId));
-        } catch (Exception ex) {
-            log.warn("Failed to fetch product detail for id {}, skipping", productId, ex);
-            return Stream.empty();
-        }
     }
 
 }

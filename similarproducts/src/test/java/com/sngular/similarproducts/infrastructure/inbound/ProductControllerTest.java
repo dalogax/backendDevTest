@@ -1,11 +1,12 @@
 package com.sngular.similarproducts.infrastructure.inbound;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Set;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,26 +39,22 @@ class ProductControllerTest {
    */
   @Test
   void shouldReturnSimilarProducts() throws Exception {
-    when(productsPort.getSimilarProductIds("1")).thenReturn(Set.of("2", "3"));
+    when(productsPort.getSimilarProductIds("1")).thenReturn(List.of("2", "3"));
     when(productsPort.getProduct("2")).thenReturn(new ProductDetail("2", "BMW i3", 50000D, true));
     when(productsPort.getProduct("3")).thenReturn(new ProductDetail("3", "Byd Seal", 43000D, false));
 
     mockMvc.perform(get("/product/1/similar").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andExpect(jsonPath("$[0].id").value("2"))
-        .andExpect(jsonPath("$[0].name").value("BMW i3"))
-        .andExpect(jsonPath("$[0].price").value(50000D))
-        .andExpect(jsonPath("$[0].availability").value(true))
-        .andExpect(jsonPath("$[1].id").value("3"))
-        .andExpect(jsonPath("$[1].name").value("Byd Seal"))
-        .andExpect(jsonPath("$[1].price").value(43000D))
-        .andExpect(jsonPath("$[1].availability").value(false));
+        .andExpect(jsonPath("$[*].id", containsInAnyOrder("2", "3")))
+        .andExpect(jsonPath("$[*].name", containsInAnyOrder("BMW i3", "Byd Seal")))
+        .andExpect(jsonPath("$[*].price", containsInAnyOrder(50000D, 43000D)))
+        .andExpect(jsonPath("$[*].availability", containsInAnyOrder(true, false)));
   }
 
   @Test
   void shouldReturn404WhenNoSimilarIds() throws Exception {
-    when(productsPort.getSimilarProductIds("1")).thenReturn(Set.of());
+    when(productsPort.getSimilarProductIds("1")).thenReturn(List.of());
 
     mockMvc.perform(get("/product/1/similar").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isNotFound());
@@ -74,7 +71,7 @@ class ProductControllerTest {
 
   @Test
   void shouldSkipNotFoundProductAndReturnRemaining() throws Exception {
-    when(productsPort.getSimilarProductIds("1")).thenReturn(Set.of("2", "3"));
+    when(productsPort.getSimilarProductIds("1")).thenReturn(List.of("2", "3"));
     when(productsPort.getProduct("2")).thenThrow(new ProductNotFoundException("2"));
     when(productsPort.getProduct("3")).thenReturn(new ProductDetail("3", "Byd Seal", 43000D, false));
 

@@ -58,7 +58,7 @@ class DetailProductsUseCaseTest {
     @Test
     void shouldReturnSimilarProducts() {
         String productId = "1";
-        when(productsPort.getSimilarProductIds(productId)).thenReturn(Set.of("2", "3"));
+        when(productsPort.getSimilarProductIds(productId)).thenReturn(List.of("2", "3"));
         when(productsPort.getProduct("2")).thenReturn(new ProductDetail("2", "BMW i3", 50000D, true));
         when(productsPort.getProduct("3")).thenReturn(new ProductDetail("3", "Byd Seal", 43000D, false));
 
@@ -67,13 +67,13 @@ class DetailProductsUseCaseTest {
         assertNotNull(result);
         assertEquals(2, result.size());
 
-        var product2 = result.stream().filter(p -> p.id().equals("2")).findFirst().orElseThrow();
+        var product2 = result.get(0);
         assertEquals("2", product2.id());
         assertEquals("BMW i3", product2.name());
         assertEquals(50000D, product2.price());
         assertEquals(true, product2.availability());
 
-        var product3 = result.stream().filter(p -> p.id().equals("3")).findFirst().orElseThrow();
+        var product3 = result.get(1);
         assertEquals("3", product3.id());
         assertEquals("Byd Seal", product3.name());
         assertEquals(43000D, product3.price());
@@ -108,14 +108,14 @@ class DetailProductsUseCaseTest {
     @Test
     void shouldSkipProductWhenRuntimeExceptionIsThrown() {
         String productId = "1";
-        when(productsPort.getSimilarProductIds(productId)).thenReturn(Set.of("2", "3"));
+        when(productsPort.getSimilarProductIds(productId)).thenReturn(List.of("2", "3"));
         when(productsPort.getProduct("2")).thenThrow(new RuntimeException("Product API failed"));
         when(productsPort.getProduct("3")).thenReturn(new ProductDetail("3", "Byd Seal", 43000D, false));
 
         List<ProductDetail> result = detailProductsUseCase.getSimilarProducts(productId);
 
         assertEquals(1, result.size());
-        assertEquals("3", result.stream().findFirst().orElseThrow().id());
+        assertEquals("3", result.get(0).id());
         verify(productsPort).getProduct("2");
         verify(productsPort).getProduct("3");
     }
@@ -123,14 +123,14 @@ class DetailProductsUseCaseTest {
     @Test
     void shouldSkipProductWhenProductNotFoundExceptionIsThrown() {
         String productId = "1";
-        when(productsPort.getSimilarProductIds(productId)).thenReturn(Set.of("2", "3"));
+        when(productsPort.getSimilarProductIds(productId)).thenReturn(List.of("2", "3"));
         when(productsPort.getProduct("2")).thenThrow(new ProductNotFoundException("2"));
         when(productsPort.getProduct("3")).thenReturn(new ProductDetail("3", "Byd Seal", 43000D, false));
 
         List<ProductDetail> result = detailProductsUseCase.getSimilarProducts(productId);
 
         assertEquals(1, result.size());
-        assertEquals("3", result.stream().filter(p -> p.id().equals("3")).findFirst().orElseThrow().id());
+        assertEquals("3", result.get(0).id());
         verify(productsPort).getProduct("2");
         verify(productsPort).getProduct("3");
     }
@@ -138,7 +138,7 @@ class DetailProductsUseCaseTest {
     @Test
     void shouldThrowNoSimilarProductsFoundWhenAllProductsNotFound() {
         String productId = "1";
-        when(productsPort.getSimilarProductIds(productId)).thenReturn(Set.of("2", "3"));
+        when(productsPort.getSimilarProductIds(productId)).thenReturn(List.of("2", "3"));
         when(productsPort.getProduct("2")).thenThrow(new ProductNotFoundException("2"));
         when(productsPort.getProduct("3")).thenThrow(new ProductNotFoundException("3"));
 
@@ -149,7 +149,7 @@ class DetailProductsUseCaseTest {
     @Test
     void shouldCallGetProductOncePerSimilarId() {
         String productId = "42";
-        when(productsPort.getSimilarProductIds(productId)).thenReturn(Set.of("10", "20", "30"));
+        when(productsPort.getSimilarProductIds(productId)).thenReturn(List.of("10", "20", "30"));
         when(productsPort.getProduct("10")).thenReturn(new ProductDetail("10", "P10", 10.0, true));
         when(productsPort.getProduct("20")).thenReturn(new ProductDetail("20", "P20", 20.0, true));
         when(productsPort.getProduct("30")).thenReturn(new ProductDetail("30", "P30", 30.0, false));
