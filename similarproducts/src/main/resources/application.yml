@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: similarproducts
+
+server:
+  port: 5000
+
+logging.level.com.sngular.similarproducts: INFO
+
+app:
+  product-service:
+    base-url: http://localhost:3001
+
+# ===========================================
+# Resilience4j Circuit Breaker Configuration 
+# ===========================================
+# Monitors failures and opens the circuit to prevent overloading the remote service
+# States: CLOSED (normal) -> OPEN (failing) -> HALF_OPEN (recovery test)
+resilience4j:
+  circuitbreaker:
+    instances:
+      productsService:
+        # Defines the number of calls (success/failure) to evaluate before making a decision
+        sliding-window-size: 10
+        # Minimum number of calls within the sliding window to calculate failure rate
+        minimum-number-of-calls: 5
+        # Failure rate threshold (%) above which the circuit switches to OPEN state
+        failure-rate-threshold: 50.0
+        # Time to wait in OPEN state before transitioning to HALF_OPEN state
+        wait-duration-in-open-state: 10s
+        # Number of calls to allow in HALF_OPEN state to test if service is recovering
+        permitted-number-of-calls-in-half-open-state: 3
+        # Automatically transition from OPEN to HALF_OPEN after wait duration (no manual intervention needed)
+        automatic-transition-from-open-to-half-open-enabled: true
+
+  # =================================
+  # Resilience4j Retry Configuration 
+  # =================================
+  # Automatically retries on transient failures (network issues, timeouts, etc.)
+  # Does NOT retry on HTTP 4xx errors (client errors) or 5xx handled by fallback
+  retry:
+    instances:
+      productsService:
+        # Maximum number of retry attempts (including the initial call)
+        max-attempts: 3
+        # Wait duration between retry attempts
+        wait-duration: 500ms

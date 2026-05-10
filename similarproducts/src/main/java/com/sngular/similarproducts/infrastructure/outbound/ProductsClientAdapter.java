@@ -14,6 +14,8 @@ import com.sngular.similarproducts.domain.ProductDetail;
 import com.sngular.similarproducts.domain.exception.ProductNotFoundException;
 import com.sngular.similarproducts.domain.exception.SimilarProductsNotFoundException;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -32,6 +34,8 @@ public class ProductsClientAdapter implements ProductsPort {
     }
 
     @Override
+    @CircuitBreaker(name = "productsService", fallbackMethod = "getSimilarProductIdsFallback")
+    @Retry(name = "productsService")
     public Collection<String> getSimilarProductIds(String productId) {
         log.debug("Calling GET /product/{}/similarids", productId);
         try {
@@ -47,7 +51,18 @@ public class ProductsClientAdapter implements ProductsPort {
         }
     }
 
+    /**
+     * Fallback method when circuit breaker is open for getSimilarProductIds.
+     * Returns an empty list to allow graceful degradation.
+     */
+    public Collection<String> getSimilarProductIdsFallback(String productId, Exception ex) {
+        log.warn("Circuit breaker open for getSimilarProductIds. Returning empty list for productId {}", productId, ex);
+        return List.of();
+    }
+
     @Override
+    @CircuitBreaker(name = "productsService", fallbackMethod = "getProductFallback")
+    @Retry(name = "productsService")
     public ProductDetail getProduct(String productId) {
         log.debug("Calling GET /product/{}", productId);
         try {
@@ -59,6 +74,17 @@ public class ProductsClientAdapter implements ProductsPort {
             log.warn("Product detail not found for productId {}", productId, ex);
             throw new ProductNotFoundException(productId, ex);
         }
+    }
+
+    /**
+     * Fallback method when circuit breaker is open for getProduct.
+     * Throws ProductNotFoundException with a specific message about circuit breaker
+     * being open.
+     */
+    public ProductDetail getProductFallback(String productId, Exception ex) {
+        log.error("Circuit breaker open for getProduct. Service unavailable for productId {}", productId, ex);
+        throw new ProductNotFoundException(productId,
+                new RuntimeException("Product service unavailable - circuit breaker is open", ex));
     }
 
 }
