@@ -23,6 +23,21 @@ services:
     volumes:
       - ./shared/simulado:/app
     command: ./bin/simulado -f /app/mocks.json
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80/product/1/similarids"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+  similar-products:
+    build: ./similarProducts
+    ports:
+      - "5000:5000"
+    environment:
+      - PRODUCT_API_BASE_URL=http://simulado:80
+    depends_on:
+      simulado:
+        condition: service_healthy
+
   k6:
     image: loadimpact/k6:0.28.0
     ports:

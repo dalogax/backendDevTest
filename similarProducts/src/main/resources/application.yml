@@ -1,0 +1,45 @@
+server:
+  port: 5000
+
+product-api:
+  base-url: ${PRODUCT_API_BASE_URL:http://localhost:3001}
+  connect-timeout-ms: 500
+  read-timeout-ms: 2000
+
+spring:
+  application:
+    name: similar-products
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,circuitbreakers,prometheus
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      productClient:
+        register-health-indicator: true
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+        record-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - com.inditex.similarproducts.exception.ExternalServiceException
+  retry:
+    instances:
+      productClient:
+        max-attempts: 2
+        wait-duration: 200ms
+        retry-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientRequestException
