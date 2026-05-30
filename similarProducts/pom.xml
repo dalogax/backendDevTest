@@ -105,6 +105,20 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
+                <configuration>
+                    <excludes>
+                        <!-- Boilerplate: Spring Boot entry point -->
+                        <exclude>com/inditex/similarproducts/SimilarProductsApplication.class</exclude>
+                        <!-- Wiring-only: bean definitions, properties binding, health probe -->
+                        <exclude>com/inditex/similarproducts/config/**</exclude>
+                        <!-- Trivial data carriers: records and simple exception subclasses -->
+                        <exclude>com/inditex/similarproducts/model/**</exclude>
+                        <exclude>com/inditex/similarproducts/exception/ErrorCode.class</exclude>
+                        <exclude>com/inditex/similarproducts/exception/ErrorResponse.class</exclude>
+                        <exclude>com/inditex/similarproducts/exception/ProductNotFoundException.class</exclude>
+                        <exclude>com/inditex/similarproducts/exception/ExternalServiceException.class</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

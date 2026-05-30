@@ -2,9 +2,9 @@ package com.inditex.similarproducts.client;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.inditex.similarproducts.config.ProductApiProperties;
 import com.inditex.similarproducts.exception.ExternalServiceException;
 import com.inditex.similarproducts.exception.ProductNotFoundException;
-import com.inditex.similarproducts.model.ProductDetail;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.retry.RetryConfig;
@@ -32,7 +32,6 @@ class ProductApiClientTest {
     private ExchangeFunction exchangeFunction;
     private ProductApiClient client;
     private Cache<String, List<String>> similarIdsCache;
-    private Cache<String, ProductDetail> productDetailCache;
 
     @BeforeEach
     void setUp() {
@@ -44,7 +43,6 @@ class ProductApiClientTest {
                 .build();
 
         similarIdsCache = Caffeine.newBuilder().maximumSize(100).build();
-        productDetailCache = Caffeine.newBuilder().maximumSize(100).build();
 
         CircuitBreakerRegistry cbRegistry = CircuitBreakerRegistry.of(
                 CircuitBreakerConfig.custom()
@@ -57,7 +55,8 @@ class ProductApiClientTest {
                         .maxAttempts(1)
                         .build());
 
-        client = new ProductApiClient(webClient, similarIdsCache, productDetailCache, cbRegistry, retryRegistry);
+        ProductApiProperties properties = new ProductApiProperties("http://localhost:3001", 500, 2000);
+        client = new ProductApiClient(webClient, properties, similarIdsCache, cbRegistry, retryRegistry);
     }
 
     private void mockResponse(HttpStatus status, String body) {
@@ -150,6 +149,22 @@ class ProductApiClientTest {
         StepVerifier.create(client.getProductDetail("99"))
                 .expectError(ProductNotFoundException.class)
                 .verify();
+    }
+
+    @Test
+    void getProductDetail_cachesNegativeResult_on404() {
+        mockResponse(HttpStatus.NOT_FOUND);
+
+        StepVerifier.create(client.getProductDetail("99"))
+                .expectError(ProductNotFoundException.class)
+                .verify();
+
+        // Second call must not hit the upstream — the absence is cached
+        StepVerifier.create(client.getProductDetail("99"))
+                .expectError(ProductNotFoundException.class)
+                .verify();
+
+        verify(exchangeFunction, times(1)).exchange(any());
     }
 
     @Test

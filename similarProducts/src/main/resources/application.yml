@@ -1,14 +1,17 @@
 server:
   port: 5000
+  shutdown: graceful
 
 product-api:
   base-url: ${PRODUCT_API_BASE_URL:http://localhost:3001}
   connect-timeout-ms: 500
-  read-timeout-ms: 2000
+  read-timeout-ms: 500
 
 spring:
   application:
     name: similar-products
+  lifecycle:
+    timeout-per-shutdown-phase: 10s
 
 management:
   endpoints:
@@ -36,10 +39,11 @@ resilience4j:
         record-exceptions:
           - org.springframework.web.reactive.function.client.WebClientRequestException
           - com.inditex.similarproducts.exception.ExternalServiceException
+          - java.util.concurrent.TimeoutException
   retry:
     instances:
       productClient:
-        max-attempts: 2
+        max-attempts: 1
         wait-duration: 200ms
         retry-exceptions:
           - org.springframework.web.reactive.function.client.WebClientRequestException

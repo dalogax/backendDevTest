@@ -1,20 +1,27 @@
 package com.inditex.similarproducts.integration;
 
 import com.inditex.similarproducts.client.ProductApiClient;
+import com.inditex.similarproducts.exception.ExternalServiceException;
 import com.inditex.similarproducts.exception.ProductNotFoundException;
 import com.inditex.similarproducts.model.ProductDetail;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -128,5 +135,68 @@ class SimilarProductsIntegrationTest {
                 .expectStatus().isEqualTo(502)
                 .expectBody()
                 .jsonPath("$.code").isEqualTo("EXTERNAL_SERVICE_UNAVAILABLE");
+    }
+
+    @Test
+    void returns504_whenUpstreamTimesOut() {
+        when(productApiClient.getSimilarIds("1"))
+                .thenReturn(Mono.error(new TimeoutException("Read timeout after 500ms")));
+
+        webTestClient.get().uri("/product/1/similar")
+                .exchange()
+                .expectStatus().isEqualTo(504)
+                .expectBody()
+                .jsonPath("$.code").isEqualTo("UPSTREAM_TIMEOUT");
+    }
+
+    @Test
+    void returns503_whenCircuitBreakerIsOpen() {
+        CircuitBreaker cb = CircuitBreakerRegistry.ofDefaults().circuitBreaker("test");
+        when(productApiClient.getSimilarIds("1"))
+                .thenReturn(Mono.error(CallNotPermittedException.createCallNotPermittedException(cb)));
+
+        webTestClient.get().uri("/product/1/similar")
+                .exchange()
+                .expectStatus().isEqualTo(503)
+                .expectBody()
+                .jsonPath("$.code").isEqualTo("SERVICE_UNAVAILABLE");
+    }
+
+    @Test
+    void returns502_whenExternalServiceError() {
+        when(productApiClient.getSimilarIds("1"))
+                .thenReturn(Mono.error(new ExternalServiceException("Upstream 500")));
+
+        webTestClient.get().uri("/product/1/similar")
+                .exchange()
+                .expectStatus().isEqualTo(502)
+                .expectBody()
+                .jsonPath("$.code").isEqualTo("EXTERNAL_SERVICE_ERROR");
+    }
+
+    @Test
+    void returns502_whenWebClientResponseError() {
+        when(productApiClient.getSimilarIds("1"))
+                .thenReturn(Mono.error(WebClientResponseException.create(
+                        HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Server Error",
+                        org.springframework.http.HttpHeaders.EMPTY, new byte[0], null)));
+
+        webTestClient.get().uri("/product/1/similar")
+                .exchange()
+                .expectStatus().isEqualTo(502)
+                .expectBody()
+                .jsonPath("$.code").isEqualTo("EXTERNAL_SERVICE_ERROR");
+    }
+
+    @Test
+    void returns500_whenUnexpectedError() {
+        when(productApiClient.getSimilarIds("1"))
+                .thenReturn(Mono.error(new IllegalStateException("Something unexpected")));
+
+        webTestClient.get().uri("/product/1/similar")
+                .exchange()
+                .expectStatus().isEqualTo(500)
+                .expectBody()
+                .jsonPath("$.code").isEqualTo("INTERNAL_ERROR");
     }
 }

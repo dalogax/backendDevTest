@@ -1,6 +1,9 @@
 package com.inditex.similarproducts.client;
 
+import com.github.benmanes.caffeine.cache.AsyncLoadingCache;
 import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.inditex.similarproducts.config.ProductApiProperties;
 import com.inditex.similarproducts.exception.ExternalServiceException;
 import com.inditex.similarproducts.exception.ProductNotFoundException;
 import com.inditex.similarproducts.model.ProductDetail;
@@ -18,32 +21,42 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class ProductApiClient {
 
     private static final Logger log = LoggerFactory.getLogger(ProductApiClient.class);
-
     private static final String CIRCUIT_BREAKER_NAME = "productClient";
 
+    // Virtual threads: lightweight, never competes with ForkJoinPool.commonPool() under load
+    private static final java.util.concurrent.Executor CACHE_LOADER_EXECUTOR =
+            Executors.newVirtualThreadPerTaskExecutor();
+
     private final WebClient webClient;
+    private final Duration readTimeout;
     private final Cache<String, List<String>> similarIdsCache;
-    private final Cache<String, ProductDetail> productDetailCache;
+    private final AsyncLoadingCache<String, Optional<ProductDetail>> productDetailCache;
     private final CircuitBreaker circuitBreaker;
     private final Retry retry;
 
     public ProductApiClient(
             WebClient productWebClient,
+            ProductApiProperties properties,
             Cache<String, List<String>> similarIdsCache,
-            Cache<String, ProductDetail> productDetailCache,
             CircuitBreakerRegistry circuitBreakerRegistry,
             RetryRegistry retryRegistry) {
         this.webClient = productWebClient;
+        this.readTimeout = Duration.ofMillis(properties.readTimeoutMs());
         this.similarIdsCache = similarIdsCache;
-        this.productDetailCache = productDetailCache;
         this.circuitBreaker = circuitBreakerRegistry.circuitBreaker(CIRCUIT_BREAKER_NAME);
         this.retry = retryRegistry.retry(CIRCUIT_BREAKER_NAME);
+        this.productDetailCache = buildProductDetailCache();
     }
 
     public Mono<List<String>> getSimilarIds(String productId) {
@@ -62,16 +75,40 @@ public class ProductApiClient {
                                 "Upstream error fetching similar IDs for product " + productId)))
                 .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
                 .doOnNext(ids -> similarIdsCache.put(productId, ids))
+                // TimeoutException is not a WebClientRequestException → RetryOperator won't retry it
+                .timeout(readTimeout)
                 .transformDeferred(RetryOperator.of(retry))
                 .transformDeferred(CircuitBreakerOperator.of(circuitBreaker));
     }
 
     public Mono<ProductDetail> getProductDetail(String productId) {
-        ProductDetail cached = productDetailCache.getIfPresent(productId);
-        if (cached != null) {
-            return Mono.just(cached);
+        // Fast path: already in cache and resolved — avoids CompletionStage overhead entirely
+        CompletableFuture<Optional<ProductDetail>> present = productDetailCache.getIfPresent(productId);
+        if (present != null && present.isDone() && !present.isCompletedExceptionally()) {
+            Optional<ProductDetail> opt = present.join();
+            return opt.map(Mono::just)
+                    .orElseGet(() -> Mono.error(new ProductNotFoundException(productId)));
         }
+        // Slow path: triggers a new load or joins a load already in flight for the same key
+        return Mono.fromCompletionStage(productDetailCache.get(productId))
+                .flatMap(opt -> opt.map(Mono::just)
+                        .orElseGet(() -> Mono.error(new ProductNotFoundException(productId))));
+    }
 
+    // --- private helpers ---
+
+    private AsyncLoadingCache<String, Optional<ProductDetail>> buildProductDetailCache() {
+        return Caffeine.newBuilder()
+                .maximumSize(5000)
+                .expireAfterWrite(30, TimeUnit.SECONDS)
+                // Dedicated executor so background loads never steal from ForkJoinPool.commonPool()
+                .executor(CACHE_LOADER_EXECUTOR)
+                .buildAsync((productId, executor) -> fetchProductDetailFromApi(productId).toFuture());
+    }
+
+    // 404 → Optional.empty() (cached — stops re-querying absent products)
+    // 5xx → Mono.error       (not cached — Caffeine evicts the entry so next call retries)
+    private Mono<Optional<ProductDetail>> fetchProductDetailFromApi(String productId) {
         return webClient.get()
                 .uri("/product/{id}", productId)
                 .retrieve()
@@ -84,7 +121,10 @@ public class ProductApiClient {
                                     "Upstream error fetching product " + productId));
                         })
                 .bodyToMono(ProductDetail.class)
-                .doOnNext(detail -> productDetailCache.put(productId, detail))
+                .map(Optional::of)
+                .onErrorResume(ProductNotFoundException.class, ex -> Mono.just(Optional.empty()))
+                // Hard deadline: fires TimeoutException — not retried, recorded by circuit breaker
+                .timeout(readTimeout)
                 .transformDeferred(CircuitBreakerOperator.of(circuitBreaker));
     }
 }

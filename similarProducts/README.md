@@ -1,85 +1,140 @@
 # Similar Products API
 
-Spring Boot REST API that aggregates similar product details for a given product.
+![Java 21](https://img.shields.io/badge/Java-21-blue?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.3-6DB33F?logo=springboot&logoColor=white)
+![Spring WebFlux](https://img.shields.io/badge/WebFlux-Reactive-6DB33F?logo=spring&logoColor=white)
+![Resilience4j](https://img.shields.io/badge/Resilience4j-Circuit_Breaker-orange)
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)
+
+Spring Boot REST API that aggregates similar product details for a given product, acting as a **Backend-for-Frontend (BFF)** for the _"Similar Products"_ storefront widget.
+
+---
 
 ## Architecture
 
 ```
-Controller → Service → ProductApiClient → External API (simulado:3001)
+GET /product/{id}/similar
+         │
+         ▼
+ ┌───────────────────┐
+ │    Controller     │  REST layer — maps HTTP ↔ domain
+ └────────┬──────────┘
+          │
+          ▼
+ ┌───────────────────┐
+ │      Service      │  Scatter-gather: fetches N product details concurrently
+ └────────┬──────────┘  Tolerant Reader: skips failed products, never throws partial
+          │
+          ▼
+ ┌───────────────────┐       ┌──────────────────────────┐
+ │  ProductApiClient │──────▶│  External API (port 3001) │
+ └───────────────────┘       └──────────────────────────┘
+   Caffeine cache
+   Circuit Breaker / Retry
+   Fail-fast timeouts
 ```
 
-- **Controller**: Exposes `GET /product/{productId}/similar` on port 5000
-- **Service**: Scatter-gather orchestration — fetches product details concurrently, skips failures gracefully
-- **Client**: WebClient with Caffeine cache, Resilience4j Circuit Breaker and Retry
-- **DTOs**: Java records for immutability and thread safety
+**Layer responsibilities**
+
+| Layer | Class | Responsibility |
+|---|---|---|
+| Controller | `SimilarProductsController` | Exposes `GET /product/{id}/similar` on port 5000 |
+| Service | `SimilarProductsService` | Concurrent scatter-gather with graceful partial failures |
+| Client | `ProductApiClient` | HTTP calls, caching, resilience operators |
+
+---
+
+## Key Design Decisions
 
 ### Concurrency
-
-Product details are fetched in parallel using `Flux.flatMapSequential`, which launches all HTTP calls concurrently while preserving the similarity order from the upstream API.
+Product details are fetched with `Flux.flatMapSequential` — all N HTTP calls run **in parallel**, results are collected in the original similarity order.
 
 ### Resilience
 
-| Mechanism | Config |
-|---|---|
-| Connect timeout | 500ms |
-| Read timeout | 2000ms |
-| Circuit Breaker | Opens at 50% failure rate (sliding window of 10), 5s recovery |
-| Retry | 2 attempts on connection errors (similarIds only) |
-| Partial failures | Failed product details are omitted, not propagated |
+| Mechanism | Configuration | Behaviour |
+|---|---|---|
+| Connect timeout | 500 ms | Fast TCP connection failure |
+| Read timeout | 500 ms (fail-fast) | Cuts slow upstream immediately |
+| Circuit Breaker | 50 % failure rate · window 10 · 5 s recovery | Stops hammering a degraded upstream |
+| Retry | Disabled | Timeouts fail immediately — no latency accumulation |
+| Partial failures | Tolerant Reader pattern | One failed product detail → omitted, not propagated |
+| Graceful shutdown | 10 s drain on SIGTERM | In-flight requests complete before the process exits |
 
 ### Caching
 
-In-memory Caffeine caches for both `similarIds` (1000 entries) and `productDetail` (5000 entries), with 30s TTL. This dramatically reduces upstream calls under K6 load.
+| Cache | Type | Size | TTL | Extra |
+|---|---|---|---|---|
+| `similarIds` | `Cache` (sync) | 1 000 entries | 30 s | — |
+| `productDetail` | `AsyncLoadingCache` | 5 000 entries | 30 s | Negative caching (404s) · Request deduplication |
 
-## Requirements
+- **Negative caching** — 404 responses are stored as absent; the upstream is never re-queried for non-existent product IDs.
+- **Request deduplication** — concurrent cache misses for the same key share a single in-flight HTTP call instead of each spawning their own.
+- **Dedicated executor** — cache loading uses a virtual-thread executor, isolated from `ForkJoinPool.commonPool()`.
 
-- **Docker** (for running via docker-compose)
-- **JDK 21+** (only if running locally outside Docker)
+### Error contract
 
-## Run with Docker (recommended)
+All error responses follow the same shape: `{ "code": "<ErrorCode>", "message": "..." }`
 
-From the repository root:
+| HTTP status | `code` | Cause |
+|---|---|---|
+| `404` | `PRODUCT_NOT_FOUND` | Requested product ID does not exist |
+| `502` | `EXTERNAL_SERVICE_ERROR` | Upstream returned 5xx |
+| `502` | `EXTERNAL_SERVICE_UNAVAILABLE` | Upstream unreachable (connection refused) |
+| `503` | `SERVICE_UNAVAILABLE` | Circuit Breaker is open |
+| `504` | `UPSTREAM_TIMEOUT` | Upstream did not respond within 500 ms |
+| `500` | `INTERNAL_ERROR` | Unexpected server error |
+
+---
+
+## Quick Start
+
+### With Docker (recommended)
 
 ```bash
+# 1. Start mock API + observability stack
 docker-compose up -d simulado influxdb grafana
+
+# 2. Start the application
 docker-compose up -d similar-products
+
+# 3. Verify
+curl http://localhost:5000/product/1/similar
 ```
 
-Verify: [http://localhost:5000/product/1/similar](http://localhost:5000/product/1/similar)
-
-## Run locally
+### Run locally
 
 ```bash
-# Start the mock API first
-docker-compose up -d simulado
+docker-compose up -d simulado          # mock API required
 
-# Then run the app (requires JAVA_HOME pointing to JDK 21+)
 cd similarProducts
-./mvnw spring-boot:run
+./mvnw spring-boot:run                 # requires JAVA_HOME → JDK 21+
 ```
 
-## Run tests
+---
+
+## Testing
 
 ```bash
 cd similarProducts
-./mvnw test
+./mvnw test                            # unit + integration tests
 ```
 
-Coverage report is generated at `target/site/jacoco/index.html`.
+Coverage report → `target/site/jacoco/index.html`
 
-## Run K6 performance test
+### Load test (K6)
 
 ```bash
 docker-compose run --rm k6 run scripts/test.js
 ```
 
-Results: [http://localhost:3000/d/Le2Ku9NMk/k6-performance-test](http://localhost:3000/d/Le2Ku9NMk/k6-performance-test)
+Results dashboard → [http://localhost:3000/d/Le2Ku9NMk/k6-performance-test](http://localhost:3000/d/Le2Ku9NMk/k6-performance-test)
 
-## API Documentation
+---
 
-Swagger UI: [http://localhost:5000/swagger-ui.html](http://localhost:5000/swagger-ui.html)
+## Observability & API Documentation
 
-## Health & Monitoring
-
-- Health check: [http://localhost:5000/actuator/health](http://localhost:5000/actuator/health) (includes upstream reachability and circuit breaker state)
-- Metrics: [http://localhost:5000/actuator/prometheus](http://localhost:5000/actuator/prometheus)
+| Endpoint | Purpose |
+|---|---|
+| [/swagger-ui.html](http://localhost:5000/swagger-ui.html) | Interactive API docs |
+| [/actuator/health](http://localhost:5000/actuator/health) | Liveness + upstream reachability + Circuit Breaker state |
+| [/actuator/prometheus](http://localhost:5000/actuator/prometheus) | Prometheus metrics |
