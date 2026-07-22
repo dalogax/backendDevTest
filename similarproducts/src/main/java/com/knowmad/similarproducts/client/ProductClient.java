@@ -11,6 +11,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +37,8 @@ import java.util.stream.Collectors;
  */
 @Component
 public class ProductClient {
+
+    private static final Logger log = LoggerFactory.getLogger(ProductClient.class);
 
     private final WebClient webClient;
 
@@ -97,7 +102,10 @@ public class ProductClient {
                 // excepción de dominio para que el controlador pueda distinguirlo.
                 .onStatus(
                         status -> status.value() == 404,
-                        response -> Mono.error(new ProductNotFoundException(productId)))
+                        response -> {
+                            log.warn("Producto no encontrado al consultar similarids: productId={}", productId);
+                            return Mono.error(new ProductNotFoundException(productId));
+                        })
                 // Deserializamos como List<Object> porque el servicio externo devuelve
                 // números (e.g. [2,3,4]) en lugar de strings. Luego los convertimos a String.
                 .bodyToMono(new ParameterizedTypeReference<List<Object>>() {})
@@ -141,6 +149,9 @@ public class ProductClient {
                 // error de red o excepción de deserialización) devolvemos Mono.empty().
                 // Esto hace que flatMapSequential en el servicio simplemente ignore este
                 // producto sin interrumpir la respuesta al cliente.
-                .onErrorResume(e -> Mono.empty());
+                .onErrorResume(e -> {
+                    log.warn("Producto descartado (error o timeout): productId={}, causa={}", productId, e.getMessage());
+                    return Mono.empty();
+                });
     }
 }

@@ -3,6 +3,8 @@ package com.knowmad.similarproducts.controller;
 import com.knowmad.similarproducts.model.ProductDetail;
 import com.knowmad.similarproducts.model.ProductNotFoundException;
 import com.knowmad.similarproducts.service.SimilarProductsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +25,8 @@ import java.util.List;
  */
 @RestController
 public class SimilarProductsController {
+
+    private static final Logger log = LoggerFactory.getLogger(SimilarProductsController.class);
 
     private final SimilarProductsService similarProductsService;
 
@@ -56,13 +60,20 @@ public class SimilarProductsController {
     @GetMapping("/product/{productId}/similar")
     public Mono<ResponseEntity<List<ProductDetail>>> getSimilarProducts(
             @PathVariable String productId) {
+        log.info("Solicitando productos similares para productId={}", productId);
         return similarProductsService.getSimilarProducts(productId)
                 // Si el servicio completa correctamente, envolvemos la lista en un 200 OK.
-                .map(ResponseEntity::ok)
+                .map(products -> {
+                    log.info("Devolviendo {} productos similares para productId={}", products.size(), productId);
+                    return ResponseEntity.ok(products);
+                })
                 // Si el servicio lanza ProductNotFoundException (producto raíz no encontrado),
                 // devolvemos 404. El resto de errores se dejan escalar como 5xx.
                 .onErrorResume(
                         ProductNotFoundException.class,
-                        e -> Mono.just(ResponseEntity.notFound().build()));
+                        e -> {
+                            log.warn("Producto no encontrado: productId={}", productId);
+                            return Mono.just(ResponseEntity.notFound().build());
+                        });
     }
 }
