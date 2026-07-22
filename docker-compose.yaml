@@ -23,6 +23,14 @@ services:
     volumes:
       - ./shared/simulado:/app
     command: ./bin/simulado -f /app/mocks.json
+  similarproducts:
+    build: ./similarproducts
+    ports:
+      - "5000:5000"
+    environment:
+      - PRODUCT_SERVICE_BASE_URL=http://simulado
+    depends_on:
+      - simulado
   k6:
     image: loadimpact/k6:0.28.0
     ports:
