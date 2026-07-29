@@ -1,0 +1,60 @@
+# axet-graphify-managed v3
+# Semantic files excluded — graphify runs in code-only AST mode
+# Text documents (classified as semantic by graphify)
+*.md
+*.mdx
+*.qmd
+*.txt
+*.rst
+*.adoc
+*.html
+*.htm
+*.yaml
+*.yml
+# Office / PDF / Google Workspace documents
+*.pdf
+*.docx
+*.doc
+*.pptx
+*.ppt
+*.xlsx
+*.xls
+*.odt
+*.odp
+*.ods
+*.rtf
+*.gdoc
+*.gsheet
+*.gslides
+# Images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.webp
+*.ico
+*.bmp
+*.tiff
+# Audio / Video
+*.mp4
+*.mp3
+*.wav
+*.avi
+*.mov
+*.mkv
+*.webm
+*.m4a
+*.m4v
+*.ogg
+# Common non-code dirs
+node_modules/
+.git/
+dist/
+out/
+build/
+coverage/
+# Machine-generated source (huge files, noise in the graph, heavy to parse)
+generated/
+__generated__/
+.graphify/
