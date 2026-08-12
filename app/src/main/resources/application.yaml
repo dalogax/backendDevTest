@@ -1,0 +1,10 @@
+server:
+  port: 5000
+
+product-api:
+  base-url: ${PRODUCT_API_BASE_URL:http://localhost:3001}
+  connect-timeout-ms: 1000
+  detail-timeout-ms: 2000
+  similar-ids-timeout-ms: 2000
+  max-connections: 50
+  pending-acquire-timeout-ms: 2000

@@ -1,0 +1,94 @@
+{
+  "permissions": {
+    "defaultMode": "default",
+    "allow": [
+      "Bash(mvn:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker-compose build:*)",
+      "Bash(docker-compose run:*)",
+      "Bash(docker-compose ps:*)",
+      "Bash(docker-compose logs:*)",
+      "Bash(docker-compose stop:*)",
+      "Bash(docker-compose start:*)",
+      "Bash(docker-compose restart:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker images:*)",
+      "Bash(docker logs:*)",
+      "Bash(curl:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Edit(./app/**)",
+      "Write(./app/**)",
+      "Edit(./.claude/**)",
+      "Write(./.claude/**)"
+    ],
+    "ask": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(docker-compose down:*)",
+      "Edit(./docker-compose.yaml)",
+      "Write(./docker-compose.yaml)"
+    ],
+    "deny": [
+      "Edit(./shared/**)",
+      "Write(./shared/**)",
+      "Edit(./similarProducts.yaml)",
+      "Write(./similarProducts.yaml)",
+      "Edit(./existingApis.yaml)",
+      "Write(./existingApis.yaml)",
+      "Edit(./readme.md)",
+      "Write(./readme.md)",
+      "Edit(./LICENSE)",
+      "Write(./LICENSE)",
+      "Edit(./assets/**)",
+      "Write(./assets/**)",
+      "Read(./**/.env)",
+      "Read(./**/*.pem)",
+      "Bash(rm -rf:*)",
+      "Bash(git push --force:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean:*)",
+      "Bash(docker-compose down -v:*)",
+      "Bash(docker system prune:*)",
+      "Bash(docker volume rm:*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"$CLAUDE_PROJECT_DIR/.claude/hooks/report-infra-status.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-blocking-calls.sh\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "if": "Bash(docker-compose run*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"$CLAUDE_PROJECT_DIR/.claude/hooks/verify-app-running.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
