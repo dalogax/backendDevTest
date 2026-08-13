@@ -17,6 +17,7 @@ Spring Boot application that implements the agreed `similarProducts` contract: i
 - [Performance analysis & tuning](#performance-analysis--tuning) ← the core of this write-up
 - [Configuration reference](#configuration-reference)
 - [Testing](#testing)
+- [Logging](#logging)
 
 ---
 
@@ -203,11 +204,34 @@ All properties live under `product-api` in `application.yaml`; each maps to an e
 | `product-api.similar-ids-timeout-ms` | `PRODUCT_API_SIMILAR_IDS_TIMEOUT_MS` | 2000 | Entry-point call timeout |
 | `product-api.max-connections` | `PRODUCT_API_MAX_CONNECTIONS` | 50 | Outbound connection pool size (see tuning above) |
 | `product-api.pending-acquire-timeout-ms` | `PRODUCT_API_PENDING_ACQUIRE_TIMEOUT_MS` | 2000 | Max wait for a pooled connection, aligned with the request budget |
+| `logging.level.com.inditex.similarproducts` | `LOG_LEVEL` | `INFO` | `DEBUG` traces every request (see [Logging](#logging)); keep at `INFO` under load |
 | `server.port` | — | 5000 | Contract-mandated port |
 
 ---
 
 ## Testing
+
+### Automated test suite
+
+```bash
+cd app && mvn test    # 36 tests, ~25s
+```
+
+Nothing needs to be running: the upstream product API is stubbed in-process with **MockWebServer**
+(test-scoped, version managed by the Spring Boot BOM), so the suite is self-contained and CI-friendly.
+
+| Test class | Layer | Covers |
+|------------|-------|--------|
+| `ProductClientTest` | HTTP boundary | Per-call timeouts, 404 → `ProductNotFoundException`, 500 → error, detail 404/500/timeout/bad-body → skipped, numeric ids coerced to strings |
+| `ProductClientLoggingTest` | HTTP boundary | Pins the log levels: a skipped product never reaches INFO; an entry-point failure always reaches WARN |
+| `SimilarProductsServiceTest` | Aggregation | Similarity order preserved when an earlier product answers last, details fetched **in parallel** (asserted with virtual time), unresolvable products dropped, upstream errors propagated |
+| `SimilarProductsControllerTest` | HTTP contract | 200 + JSON body, `[]` when nothing resolves, 404 for an unknown base product, 5xx for an unexpected failure |
+| `SimilarProductsIntegrationTest` | End-to-end | The five scenarios below, over a real socket through the full chain |
+| `SimilarProductsApplicationTests` | Wiring | Context loads |
+
+Timing tests scale the upstream delays down (a stub delayed far above a short timeout) rather than
+waiting out the real 5s/50s mocks. Tests that are *not* about timing keep the production 2s timeout so
+JVM warm-up cannot make a healthy product look slow.
 
 ### Functional smoke test (all 5 scenarios)
 
@@ -227,3 +251,35 @@ Expected: product 1 → {2,3,4}; product 2 → {3,100} (1000 times out); product
 docker-compose run --rm k6 run scripts/test.js
 # results: http://localhost:3000/d/Le2Ku9NMk/k6-performance-test
 ```
+
+---
+
+## Logging
+
+The governing rule is **WARN for what makes a request fail, DEBUG for what the design deliberately
+tolerates**. Skipping a product is designed behaviour, not a fault: products 1000 and 10000 time out on
+essentially every request the load test makes, so logging that path above DEBUG would bury the failures
+that actually matter.
+
+| Level | What is logged | Volume |
+|-------|----------------|--------|
+| `INFO` | Effective client config (base URL, pool, timeouts) | 2 lines, once at startup |
+| `WARN` | `/similarids` returned 5xx or timed out; a request resolved to a 5xx | Only when a request actually fails |
+| `DEBUG` | IDs received, every skipped product with its reason, products resolved + elapsed ms | ~2 lines per request, plus one per skip |
+
+A 404 from `/similarids` is a client outcome (it becomes a 404 response), not a fault — it stays at DEBUG.
+
+Running the full set of scenarios at the default `INFO` produces **zero** per-request lines. Set
+`LOG_LEVEL=DEBUG` to trace a request end to end — never during a load test:
+
+```bash
+LOG_LEVEL=DEBUG mvn spring-boot:run
+```
+
+```
+DEBUG SimilarProductsService   : Product 2 has similar IDs [3, 100, 1000]
+DEBUG ProductClient            : Skipping product 1000: no response within 2000ms
+DEBUG SimilarProductsController: Resolved 2 similar products for product 2 in 2012ms
+```
+
+`ProductClientLoggingTest` pins these levels so the no-noise rule cannot be relaxed by accident.

@@ -34,4 +34,7 @@ Slow scenarios (2 and 3) should complete in roughly the timeout window (~2s), ne
 
 - **Timeout not respected (response takes 5s+):** check `product-api.detail-timeout-ms` and the `.timeout(...)` in `ProductClient.getProductDetail`.
 - **404/500 propagated instead of skipped:** check the `onErrorResume` / non-2xx handling in `ProductClient.getProductDetail` — it must resolve to `Mono.empty()`.
-- **Connection refused:** the app isn't running. Start it (and the mock) with `docker-compose up -d simulado yourapp` — build first with `docker-compose build yourapp` if code changed. (Local `mvn spring-boot:run` needs Java 21; this host has Java 17, so prefer Docker.)
+- **Connection refused:** the app isn't running. Start it (and the mock) with `docker-compose up -d simulado yourapp` — build first with `docker-compose build yourapp` if code changed. (`cd app && mvn spring-boot:run` also works: Maven runs on JDK 21 even though `java` on the PATH is 17.)
+
+For the same behaviours without any of this running, use `/unit-test` — `SimilarProductsIntegrationTest`
+covers these five scenarios against an in-process stub.

@@ -38,8 +38,6 @@
       "Write(./similarProducts.yaml)",
       "Edit(./existingApis.yaml)",
       "Write(./existingApis.yaml)",
-      "Edit(./readme.md)",
-      "Write(./readme.md)",
       "Edit(./LICENSE)",
       "Write(./LICENSE)",
       "Edit(./assets/**)",
@@ -80,7 +78,6 @@
       },
       {
         "matcher": "Bash",
-        "if": "Bash(docker-compose run*)",
         "hooks": [
           {
             "type": "command",

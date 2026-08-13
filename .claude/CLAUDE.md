@@ -35,6 +35,24 @@ mvn spring-boot:run
 docker-compose up -d simulado influxdb grafana yourapp
 ```
 
+## Testing
+
+```bash
+cd app && mvn test      # 31 tests, ~25s — nothing needs to be running
+```
+
+The upstream API is stubbed in-process with MockWebServer, so the suite needs neither Docker nor Simulado.
+Maven runs on JDK 21 (`~/.jdks/jdk-21.0.6`) even though `java` on the PATH is 17.
+
+| Test class | Covers |
+|------------|--------|
+| `ProductClientTest` | Timeouts, 404/500 skipping, JSON id coercion, malformed bodies |
+| `SimilarProductsServiceTest` | Similarity order, parallel fetching, dropping unresolvable products |
+| `SimilarProductsControllerTest` | 200 / `[]` / 404 / 5xx mapping |
+| `SimilarProductsIntegrationTest` | The five mock scenarios end-to-end over a real socket |
+
+See the **write-tests** skill for conventions and the timing pitfalls (cold-start flakiness, virtual-time hangs).
+
 ## Load Testing
 
 ```bash
@@ -71,6 +89,24 @@ Load testing (see `app/README.md` for the full data) established:
 
 When investigating performance, do NOT reflexively enlarge the pool — measure first.
 
+## Logging
+
+Rule: **WARN is for what makes a request fail; DEBUG is for what the design deliberately tolerates.**
+Skipping a product is designed behaviour that happens on nearly every request under load, so it must
+never be logged above DEBUG — it would bury the failures that matter.
+
+| Level | What | Frequency |
+|-------|------|-----------|
+| INFO | Effective client config + timeouts | 2 lines, once at startup |
+| WARN | `/similarids` returned 5xx or timed out; request resolved to a 5xx | Only on a request that fails |
+| DEBUG | IDs received, each skipped product + reason, products resolved + elapsed ms | ~2 lines/request + 1 per skip |
+
+At INFO the whole k6 scenario set produces **zero** per-request lines. Set `LOG_LEVEL=DEBUG` to trace a
+request end to end — never during a load test.
+
+A 404 from `/similarids` is a client outcome, not a fault: DEBUG, not WARN. `ProductClientLoggingTest`
+pins these levels so they can't be relaxed by accident.
+
 ## Mock Scenarios (port 3001)
 
 | Our endpoint | Similar IDs | What happens |
@@ -94,3 +130,4 @@ binding), so they can be overridden without a rebuild. See `app/README.md` for t
 | `product-api.similar-ids-timeout-ms` | `PRODUCT_API_SIMILAR_IDS_TIMEOUT_MS` | 2000 | Entry-point (similarids) call timeout |
 | `product-api.max-connections` | `PRODUCT_API_MAX_CONNECTIONS` | 50 | Outbound connection pool size — the main perf lever |
 | `product-api.pending-acquire-timeout-ms` | `PRODUCT_API_PENDING_ACQUIRE_TIMEOUT_MS` | 2000 | Max wait for a pooled connection |
+| `logging.level.com.inditex.similarproducts` | `LOG_LEVEL` | `INFO` | `DEBUG` traces every request; keep at INFO under load |

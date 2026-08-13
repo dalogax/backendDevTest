@@ -2,11 +2,15 @@ package com.inditex.similarproducts.service;
 
 import com.inditex.similarproducts.client.ProductClient;
 import com.inditex.similarproducts.model.ProductDetail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 @Service
 public class SimilarProductsService {
+
+    private static final Logger log = LoggerFactory.getLogger(SimilarProductsService.class);
 
     private final ProductClient productClient;
 
@@ -27,6 +31,9 @@ public class SimilarProductsService {
      */
     public Flux<ProductDetail> getSimilarProducts(String productId) {
         return productClient.getSimilarIds(productId)
+                // Two DEBUG lines per request (here and in the controller) are enough to follow a
+                // flow end to end: how many IDs came back, and how many survived the detail fetch.
+                .doOnNext(similarIds -> log.debug("Product {} has similar IDs {}", productId, similarIds))
                 .flatMapMany(Flux::fromIterable)
                 .flatMapSequential(productClient::getProductDetail);
     }

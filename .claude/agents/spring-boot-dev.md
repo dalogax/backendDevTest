@@ -38,10 +38,21 @@ You are working on the **Similar Products Service** — a Spring Boot 3.3 + Java
 - **Do NOT reflexively grow the connection pool.** `max-connections` is a throughput↔completeness Pareto
   trade-off (the single-process mock is the bottleneck); measure before changing it. Default is 50.
 - **`PRODUCT_API_BASE_URL`** env var controls the upstream: `http://localhost:3001` locally, `http://simulado` in Docker.
+- **Logging: WARN only for what fails a request; DEBUG for what the design tolerates.** A skipped product
+  (404/500/timeout) runs on nearly every request under load — logging it above DEBUG buries real failures.
+  Use parameterised SLF4J (`log.debug("... {}", id)`), never string concatenation, and never log per product
+  at INFO. `LOG_LEVEL=DEBUG` traces a request end to end; `ProductClientLoggingTest` pins the levels.
 
-## Build & verify (important: this host runs Java 17, the app targets Java 21)
+## Build & verify
 
-Local `mvn spring-boot:run` / `mvn test` will NOT compile here. Build and verify through Docker instead:
+`java` on the PATH is 17, but **Maven runs on JDK 21** (`~/.jdks/jdk-21.0.6`), so `mvn test` and
+`mvn spring-boot:run` do work locally. Run the test suite after any change to `src/main`:
+
+```bash
+cd app && mvn test        # 31 tests, ~25s, nothing else needs to be running
+```
+
+For a running stack (mocks + app), use Docker:
 
 ```bash
 docker-compose build yourapp && docker-compose up -d yourapp   # rebuild after code changes

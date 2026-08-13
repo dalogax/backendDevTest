@@ -1,6 +1,8 @@
 package com.inditex.similarproducts.config;
 
 import io.netty.channel.ChannelOption;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,8 @@ import java.time.Duration;
 
 @Configuration
 public class WebClientConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(WebClientConfig.class);
 
     @Bean
     public WebClient productWebClient(
@@ -37,6 +41,11 @@ public class WebClientConfig {
 
         HttpClient httpClient = HttpClient.create(connectionProvider)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeoutMs);
+
+        // Logged once at startup: maxConnections is the main performance lever and is env-overridable,
+        // so the effective value has to be visible when diagnosing a run.
+        log.info("Product API client: baseUrl={}, maxConnections={}, connectTimeout={}ms, pendingAcquireTimeout={}ms",
+                baseUrl, maxConnections, connectTimeoutMs, pendingAcquireTimeoutMs);
 
         return WebClient.builder()
                 .baseUrl(baseUrl)
