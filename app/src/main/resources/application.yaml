@@ -1,0 +1,18 @@
+server:
+  port: 5000
+
+product-api:
+  base-url: ${PRODUCT_API_BASE_URL:http://localhost:3001}
+  connect-timeout-ms: 1000
+  detail-timeout-ms: 2000
+  similar-ids-timeout-ms: 2000
+  max-connections: 50
+  pending-acquire-timeout-ms: 2000
+
+logging:
+  level:
+    # INFO in production: startup config, plus a WARN whenever a request actually fails.
+    # Set LOG_LEVEL=DEBUG to trace a single request end to end (IDs received, products skipped
+    # and why, products resolved and how long it took). DEBUG is per-request and per-product —
+    # do not leave it on during a load test.
+    com.inditex.similarproducts: ${LOG_LEVEL:INFO}

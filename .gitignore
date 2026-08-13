@@ -1,0 +1,10 @@
+# Build output
+target/
+app/target/
+
+# IntelliJ IDEA
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
