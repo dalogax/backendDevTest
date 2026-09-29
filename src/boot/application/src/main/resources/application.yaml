@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: similar-product-finder
+
+server:
+  port: 5000
