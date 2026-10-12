@@ -1,0 +1,27 @@
+server:
+  port: 5000
+
+spring:
+  application:
+    name: similar-products
+  threads:
+    virtual:
+      enabled: true
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+app:
+  product:
+    base-url: http://localhost:3001
+    timeout-ms: 2000
+    connect-timeout-ms: 500
+    max-connections: 600
+    cache-ttl-seconds: 60
+    cache-max-size: 1000

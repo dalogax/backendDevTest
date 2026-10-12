@@ -1,0 +1,25 @@
+# Build
+target/
+*.jar
+*.war
+*.original
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# AI tooling local (excluido intencionadamente para una entrega limpia; disponible bajo peticion)
+.opencode/
