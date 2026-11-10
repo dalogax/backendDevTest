@@ -1,0 +1,10 @@
+# Optional application overlay; the supplied mocks and load tests stay untouched.
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      CATALOG_BASE_URL: http://simulado:80
+    depends_on:
+      - simulado

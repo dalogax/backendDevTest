@@ -1,0 +1,58 @@
+name: Verify
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - run: ./mvnw -B -ntp verify
+      - name: Build and start the application with the supplied mocks
+        run: docker compose -f docker-compose.yaml -f compose.app.yaml up -d --build app
+      - name: Wait for the API
+        run: |
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://localhost:5000/product/1/similar > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+      - name: Assert the contract against the container
+        run: |
+          docker run --rm --network=host \
+            -e BASE_URL=http://127.0.0.1:5000 \
+            -v "$PWD/tests/k6:/scripts:ro" \
+            grafana/k6:2.3.0 run /scripts/contract.js
+      - name: Run the supplied load test
+        run: |
+          docker compose -f docker-compose.yaml -f compose.app.yaml run --name supplied-k6 \
+            -e K6_OUT=json=/tmp/k6-results.json k6 run --summary-export /tmp/k6-summary.json scripts/test.js \
+            | tee target/supplied-k6.log
+          docker cp supplied-k6:/tmp/k6-results.json target/supplied-k6-results.json
+          docker cp supplied-k6:/tmp/k6-summary.json target/supplied-k6-summary.json
+          python3 tests/k6/summarize.py target/supplied-k6-results.json --output target/supplied-k6-analysis.json
+      - name: Collect container logs
+        if: always()
+        run: |
+          mkdir -p target
+          docker compose -f docker-compose.yaml -f compose.app.yaml logs --no-color > target/containers.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verification-results
+          path: |
+            target/surefire-reports/
+            target/supplied-k6.log
+            target/supplied-k6-*.json
+            target/containers.log
+      - name: Stop containers
+        if: always()
+        run: docker compose -f docker-compose.yaml -f compose.app.yaml down --volumes

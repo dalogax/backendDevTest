@@ -1,0 +1,13 @@
+server:
+  port: 5000
+spring:
+  application:
+    name: similar-products
+catalog:
+  base-url: ${CATALOG_BASE_URL:http://localhost:3001}
+  connect-timeout: ${CATALOG_CONNECT_TIMEOUT:1s}
+  request-timeout: ${CATALOG_REQUEST_TIMEOUT:6s}
+  max-idle-time: ${CATALOG_MAX_IDLE_TIME:4s}
+  max-concurrency: ${CATALOG_MAX_CONCURRENCY:16}
+  max-connections: ${CATALOG_MAX_CONNECTIONS:1000}
+  pending-acquire-max-count: ${CATALOG_PENDING_ACQUIRE_MAX_COUNT:1000}
