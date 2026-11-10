@@ -1,0 +1,113 @@
+{
+  "date": "2026-11-10",
+  "environment": {
+    "os": "Alpine Linux 3.24.4",
+    "kernel": "6.18.60-0-virt",
+    "architecture": "arm64",
+    "vcpus": 4,
+    "memory_gib": 3,
+    "docker": "29.9.3",
+    "java": "21.0.13",
+    "virtualization": "Lima 2.3.0 / Apple Virtualization Framework",
+    "supplied_images_execution": "linux/amd64 under QEMU user emulation"
+  },
+  "images": {
+    "simulado": "ldabiralai/simulado@sha256:e1a3287457a4d1978fc0c2de80756a3b8afb39039a38cb8196c0295943208e3c",
+    "k6": "loadimpact/k6@sha256:43b08ba0140df550a63619f7883be24bf934035331e1f96d178f1f4bfc3ccd21",
+    "application_manifest": "sha256:399fcd6ce8857d641a85e57a07a58bebe8dff1564cbde4b49ff79fe4706ab3d1"
+  },
+  "source_fingerprint_sha256": "f21e28942d40bf71680cf9c563e1712d20d051b6e5dd4dcb91af61e685a92473",
+  "fingerprint_method": "SHA256 of sorted path + NUL + SHA256(file) + newline for pom.xml, Dockerfile, src/**/*.java and src/main/resources/application.yaml",
+  "supplied_script_sha256": "5ec9c93f42b738c5cf46cdf8b3ed6fbf5d56f1a2b74138ecb3e55cb45b8e5d77",
+  "supplied_mocks_sha256": "915dce1a65fd88f2abc2630f1c2ca96923cf653a3ae85bee22ad1dc46c9f2b57",
+  "automated_tests": {
+    "passed": 35,
+    "failures": 0,
+    "errors": 0,
+    "executed_in_docker_build": true
+  },
+  "contract_checks": {
+    "passed": 16,
+    "failed": 0,
+    "http_failure_rate": 0,
+    "loader": "native macOS k6 2.3.0 through forwarded port to Docker application"
+  },
+  "original_load": {
+    "loader": "original Docker k6 0.28.0",
+    "script": "shared/k6/test.js",
+    "script_modified": false,
+    "vus": 200,
+    "export_only_override": "K6_OUT=json=/tmp/results.json instead of InfluxDB",
+    "requests": 3108,
+    "statuses": {
+      "200": 3108
+    },
+    "unexpected_responses": 0,
+    "transport_errors": {},
+    "scenarios": {
+      "error": {
+        "requests": 747,
+        "statuses": {
+          "200": 747
+        },
+        "median_ms": 2045.76,
+        "p95_ms": 2904.529,
+        "max_ms": 3115.253
+      },
+      "normal": {
+        "requests": 779,
+        "statuses": {
+          "200": 779
+        },
+        "median_ms": 1714.864,
+        "p95_ms": 2833.588,
+        "max_ms": 3527.644
+      },
+      "notFound": {
+        "requests": 782,
+        "statuses": {
+          "200": 782
+        },
+        "median_ms": 1892.218,
+        "p95_ms": 2835.219,
+        "max_ms": 3031.489
+      },
+      "slow": {
+        "requests": 400,
+        "statuses": {
+          "200": 400
+        },
+        "median_ms": 6317.137,
+        "p95_ms": 7322.916,
+        "max_ms": 7376.469
+      },
+      "verySlow": {
+        "requests": 400,
+        "statuses": {
+          "200": 400
+        },
+        "median_ms": 6258.021,
+        "p95_ms": 6577.874,
+        "max_ms": 6658.095
+      }
+    }
+  },
+  "before_idle_expiry_fix": {
+    "requests": 3716,
+    "http_200": 3677,
+    "http_502": 39
+  },
+  "fix": {
+    "catalog_max_idle_time_ms": 4000,
+    "upstream_node_keep_alive_timeout_ms": 5000,
+    "pool_eviction_interval_ms": 1000,
+    "automatic_retries": false
+  },
+  "notes": [
+    "The host was kept awake during the accepted load run. A separate suspended run with a 497137ms guest clock correction was excluded.",
+    "Timings include x86 emulation of the supplied mock and load generator; they are not a native production capacity measurement.",
+    "All five supplied scenarios produced only HTTP 200 responses. The separate contract check also verified unknown products return 404.",
+    "The original script deliberately interrupts iterations at scenario boundaries and contains no latency acceptance thresholds.",
+    "This report records local Docker/Linux validation; GitHub Actions execution results are recorded separately in the repository Actions tab."
+  ]
+}
